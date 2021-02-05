@@ -36,9 +36,9 @@ class OwnerCreateSerializer(ModelSerializer):
 
     @transaction.atomic()
     def create(self, validated_data):
-        print(validated_data)
+        # print(validated_data)
         pay_managers_data = validated_data.pop('pay_managers', None)
-        print('pay_managers_data', pay_managers_data)
+        # print('pay_managers_data', pay_managers_data)
         owner = Owner.objects.create(**validated_data)
         if pay_managers_data:
             for manager in pay_managers_data:
@@ -51,3 +51,9 @@ class OwnerCreateSerializer(ModelSerializer):
                 )
                 ConnectOwnerManager.objects.create(manager=manager_obj, owner=owner)
         return owner
+
+    @transaction.atomic()
+    def update(self, instance, validated_data):
+        print(instance)
+        print(validated_data)
+        return instance

@@ -9,8 +9,6 @@ class FranchiseeUserManager(PayGoUserManager):
 
 
 class FranchiseeUser(PayGoUser):
-    # agency = models.ForeignKey(AgencyUser, related_name='franchiseeusers', on_delete=models.PROTECT, null=True,
-    #                            blank=True, help_text='에이전트')
 
     objects = FranchiseeUserManager()
 
@@ -25,7 +23,8 @@ class FranchiseeUser(PayGoUser):
 
 
 class Memo(models.Model):
-    franchisee_user = models.ForeignKey(FranchiseeUser, related_name='memos', on_delete=models.PROTECT,
+    franchisee_user = models.ForeignKey(FranchiseeUser, related_name='memos',
+                                        on_delete=models.PROTECT,
                                         help_text="가맹점주메모")
     sales_slip = models.CharField('매출전표', max_length=100, blank=True, null=True)
     vat_notation = models.CharField('부가세표기', max_length=100, blank=True, null=True)

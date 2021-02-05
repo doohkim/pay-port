@@ -38,9 +38,9 @@ class PaymentMethod(models.Model):
 
 class PaymentMethodSettlementCycle(models.Model):
     NOT_SETTLED, IMMEDIATELY, DAY1, DAY2, DAY3, DAY4, DAY5, DAY6, DAY7, DAY8, DAY9, DAY10, DAY11, DAY12, DAY13, DAY14, \
-    DAY15, MONTH1, MONTH2, MONTH3, MONTH4 = 'not_settled', 'immediately', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', \
-                                            'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'M1', \
-                                            'M2', 'M3', 'M4'
+        DAY15, MONTH1, MONTH2, MONTH3, MONTH4 = 'not_settled', 'immediately', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', \
+                                                'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'M1', \
+                                                'M2', 'M3', 'M4'
     SETTLEMENT_CYCLE = (
         (NOT_SETTLED, 'not_settled'),
         (IMMEDIATELY, 'immediately'),

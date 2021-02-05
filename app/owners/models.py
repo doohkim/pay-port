@@ -1,15 +1,13 @@
 from django.db import models
 import datetime
 
-from members.models import PayGoUser
-
 
 class Owner(models.Model):
     CONTACT_IN_CONSULTATION, CONTACT_ACCEPTANCE, CONTACT_RM_REVIEW_REQUEST, CONTACT_RM_REVIEW_COMPLETED, \
-    CONTACT_PERSON_IN_CHARGE_APPROVAL_REQUEST, CONTACT_PERSON_IN_CHARGE_APPROVAL_COMPLETED, \
-    CONTACT_PERSON_IN_CHARGE_APPROVAL_REJECT, CONTACT_COMPLETION = 'ct_consult', 'ct_accept', 'rm_req', 'rm_comp', \
-                                                                   'approve_req', 'approve_comp', \
-                                                                   'approve_reject', 'contact_comp '
+        CONTACT_PERSON_IN_CHARGE_APPROVAL_REQUEST, CONTACT_PERSON_IN_CHARGE_APPROVAL_COMPLETED, \
+        CONTACT_PERSON_IN_CHARGE_APPROVAL_REJECT, CONTACT_COMPLETION = 'ct_consult', 'ct_accept', 'rm_req', 'rm_comp', \
+                                                                       'approve_req', 'approve_comp', \
+                                                                       'approve_reject', 'contact_comp '
     CONTACT_STATUS = (
         (CONTACT_IN_CONSULTATION, '상담중'),
         (CONTACT_ACCEPTANCE, '계약서접수'),
@@ -61,7 +59,7 @@ class Owner(models.Model):
     pdf1 = models.FileField('PDF1', upload_to='users/pdf', blank=True, null=True)
     updated_date = models.DateTimeField('업데이트된날짜', auto_now=True)
     pay_managers = models.ManyToManyField('PayGoComputationalManager', through='ConnectOwnerManager',
-                                           blank=True,
+                                          blank=True,
                                           help_text='사업자관리자')
 
     class Meta:

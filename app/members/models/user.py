@@ -70,8 +70,8 @@ class PayGoUser(AbstractUser):
     # 담당자
     # 그리고 M2M은 related_name 뭐라고 적어야 하지?
     # related_name 과 변수명이 같아야 하는가?
-    paygocomputationalmanagers = models.ManyToManyField('owners.PayGoComputationalManager',
-                                                        related_name='paygousers', help_text="전산 관리자")
+    pay_managers = models.ManyToManyField('owners.PayGoComputationalManager', blank=True,
+                                          through='ConnectPayGoUserManager', help_text="전산 관리자")
     # settlement_account = models.ForeignKey('paymethod.SettlementAccount', on_delete=models.PROTECT, blank=True,
     #                                        null=True, related_name='paygousers', help_text='정산계좌등록')
 
@@ -95,3 +95,14 @@ class PayGoUser(AbstractUser):
         elif self.type == self.TYPE_AGENCY:
             return f'[에이전시유저] {self.mid_name} | 전화번호 : {self.phone_number} '
         return f'{self.mid} | 로그인시 : {self.mid_name}'
+
+
+class ConnectPayGoUserManager(models.Model):
+    manager = models.ForeignKey('owners.PayGoComputationalManager', related_name='manager_to_user',
+                                on_delete=models.PROTECT, help_text='매니저')
+    user = models.ForeignKey(PayGoUser, related_name='user_to_manager', on_delete=models.PROTECT,
+                             help_text="페이고유저")
+    created_date = models.DateField('생성날짜', auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user} | {self.manager}'
