@@ -5,7 +5,7 @@ from members.models import PayGoUserManager, PayGoUser
 
 class AgencyUserManager(PayGoUserManager):
     def get_queryset(self):
-        return super().get_queryset().filter(type=PayGoUser.TYPE_AGENCY)
+        return super().get_queryset().filter(user_type=PayGoUser.TYPE_AGENCY)
 
 
 class AgencyUser(PayGoUser):
@@ -19,5 +19,5 @@ class AgencyUser(PayGoUser):
         verbose_name_plural = f'{verbose_name} 목록'
 
     def save(self, *args, **kwargs):
-        self.type = PayGoUser.TYPE_AGENCY
+        self.user_type = PayGoUser.TYPE_AGENCY
         super().save(*args, **kwargs)

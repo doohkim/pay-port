@@ -21,7 +21,7 @@ class PayGoUserManager(BaseUserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
-        extra_fields.setdefault('type', PayGoUser.TYPE_STAFF)
+        extra_fields.setdefault('user_type', PayGoUser.TYPE_STAFF)
         # owner 관리자 추가 admin 유저도 사업자 등록을 해야하는데 여기서 에러나서
         # extra_fields.setdefault('owner', 1)
 
@@ -44,12 +44,13 @@ class PayGoUser(AbstractUser):
     mid = models.CharField("가맹점아이디_MID", unique=True, max_length=10)
     gid = models.CharField("가맹점아이디_GID", max_length=10)
     # 로그인시 노출 되는 이름
-    mid_name = models.CharField("가맹점관리자_MID_name", max_length=9)
+    mid_name = models.CharField("가맹점관리자_MID_name", max_length=20)
     main_homepage = models.URLField("메인홈페이지_URL", blank=True, null=True),
     sub_homepage = models.URLField("서브몰심사_URL", blank=True, null=True)
     # 아이디 활성화 여부
     is_active = models.BooleanField('활성화여부', default=True)
-    type = models.CharField('타입', max_length=1, choices=CHOICES_TYPE, default=TYPE_FRANCHISEE)
+    user_type = models.CharField('타입', max_length=1, choices=CHOICES_TYPE, default=TYPE_FRANCHISEE)
+    boss_name = models.CharField('보스이름', max_length=20, blank=True, null=True)
     email = models.EmailField('이메일', max_length=100)
     phone_number = models.CharField('전화번호', max_length=30, blank=True, null=True)
     fax_number = models.CharField("팩스번호", max_length=30, blank=True, null=True)
@@ -70,8 +71,8 @@ class PayGoUser(AbstractUser):
     # 담당자
     # 그리고 M2M은 related_name 뭐라고 적어야 하지?
     # related_name 과 변수명이 같아야 하는가?
-    pay_managers = models.ManyToManyField('owners.PayGoComputationalManager', blank=True,
-                                          through='ConnectPayGoUserManager', help_text="전산 관리자")
+    franchisee_managers = models.ManyToManyField('owners.PayGoComputationalManager', blank=True,
+                                                 through='ConnectPayGoUserManager', help_text="전산관리자")
     # settlement_account = models.ForeignKey('paymethod.SettlementAccount', on_delete=models.PROTECT, blank=True,
     #                                        null=True, related_name='paygousers', help_text='정산계좌등록')
 
@@ -88,11 +89,11 @@ class PayGoUser(AbstractUser):
         verbose_name_plural = '%s 목록' % verbose_name
 
     def __str__(self):
-        if self.type == self.TYPE_STAFF:
+        if self.user_type == self.TYPE_STAFF:
             return f'[관리자유저] {self.mid_name} | 전화번호 : {self.phone_number}'
-        elif self.type == self.TYPE_FRANCHISEE:
+        elif self.user_type == self.TYPE_FRANCHISEE:
             return f'[가맹점유저] {self.mid_name} | 전화번호 : {self.phone_number} '
-        elif self.type == self.TYPE_AGENCY:
+        elif self.user_type == self.TYPE_AGENCY:
             return f'[에이전시유저] {self.mid_name} | 전화번호 : {self.phone_number} '
         return f'{self.mid} | 로그인시 : {self.mid_name}'
 
@@ -105,4 +106,4 @@ class ConnectPayGoUserManager(models.Model):
     created_date = models.DateField('생성날짜', auto_now_add=True)
 
     def __str__(self):
-        return f'{self.user} | {self.manager}'
+        return f'connect model {self.user} | {self.manager}'

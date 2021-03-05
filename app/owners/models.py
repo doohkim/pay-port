@@ -54,7 +54,6 @@ class Owner(models.Model):
     contact_receipt = models.BooleanField("계약서_수취", default=False)
     contact_current_status = models.CharField("계약현재상태", max_length=15, choices=CONTACT_STATUS,
                                               default=CONTACT_IN_CONSULTATION)
-
     contact_type = models.CharField("계약서종류", max_length=100, default="일반")
     pdf1 = models.FileField('PDF1', upload_to='users/pdf', blank=True, null=True)
     updated_date = models.DateTimeField('업데이트된날짜', auto_now=True)
@@ -82,8 +81,6 @@ class ConnectOwnerManager(models.Model):
 
 
 class PayGoComputationalManager(models.Model):
-    # user = models.ForeignKey(PayGoUser, on_delete=models.SET_NULL, related_name='paygocomputationmanagers', null=True,
-    #                          blank=True, help_text='가맹점담당매니저')
     name = models.CharField('담당자이름', max_length=100)
     department = models.CharField('담당자부서', max_length=100)
     position = models.CharField('담당자직책', max_length=100)
@@ -98,4 +95,4 @@ class PayGoComputationalManager(models.Model):
         verbose_name_plural = '%s 목록' % verbose_name
 
     def __str__(self):
-        return f'{self.department} {self.name}'
+        return f'pay go computation manager {self.department} {self.name}'
