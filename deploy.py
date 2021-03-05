@@ -13,7 +13,7 @@ DOCKER_OPTIONS = [
     ('-d', ''),
     ('-p', '80:80'),
     # ('-p', '443:443'),
-    ('--name', 'iamport'),
+    ('--name', 'pay-port'),
     # ('-v', '/etc/letsencrypt:/etc/letsencrypt'),
 ]
 
@@ -50,7 +50,7 @@ def server_init():
 
 
 def server_pull_run():
-    ssh_run(f'sudo docker stop instagram', ignore_error=True)
+    ssh_run(f'sudo docker stop pay-port', ignore_error=True)
     ssh_run(f'sudo docker pull {DOCKER_IMAGE_TAG}')
     ssh_run('sudo docker run {options} {tag} /bin/bash'.format(
         options=' '.join([
@@ -67,12 +67,22 @@ def copy_secrets():
     print('coppy secrets!!!!!!!!')
 
 
+def server_cmd():
+    ssh_run(f'sudo docker exec pay-port /usr/sbin/nginx -s stop', ignore_error=True)
+    ssh_run(f'sudo docker exec pay-port python manage.py collectstatic --noinput')
+    print('거의 옴')
+    ssh_run(f'sudo docker exec -it -d pay-port '
+            f'supervisord -c /srv/iamport/.config/local_dev/supervisord.conf -n')
+    print('거의 옴')
+
+
 if __name__ == '__main__':
     try:
         local_build_push()
         server_init()
         server_pull_run()
         copy_secrets()
+        server_cmd()
     except subprocess.CalledProcessError as e:
         print('deploy Error')
         print(' cmd:', e.cmd)

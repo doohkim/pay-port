@@ -3,8 +3,12 @@ from .base import *
 DEBUG = True
 
 WSGI_APPLICATION = 'config.wsgi.local.application'
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS += [
+    '*',
+]
+INSTALLED_APPS += [
 
+]
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
