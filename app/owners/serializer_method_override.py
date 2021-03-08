@@ -22,7 +22,6 @@ def owner_serializer_update_method(instance, validated_data):
     instance.business_main_item = validated_data.get('business_main_item', instance.business_main_item)
     instance.application_route = validated_data.get('application_route', instance.application_route)
     instance.sales_channel = validated_data.get('sales_channel', instance.sales_channel)
-
     instance.transaction_amount = validated_data.get('transaction_amount', instance.transaction_amount)
     instance.past_pg_company = validated_data.get('past_pg_company', instance.past_pg_company)
     instance.business_official_address = validated_data.get('business_official_address',
@@ -38,4 +37,5 @@ def owner_serializer_update_method(instance, validated_data):
     instance.contact_receipt = validated_data.get('contact_receipt', instance.contact_receipt)
     instance.contact_current_status = validated_data.get('contact_current_status', instance.contact_current_status)
     instance.pdf1 = validated_data.get('pdf1', instance.pdf1)
+    instance.save()
     return instance

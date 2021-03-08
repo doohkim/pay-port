@@ -82,10 +82,12 @@ class ConnectOwnerManager(models.Model):
 
 class PayGoComputationalManager(models.Model):
     name = models.CharField('담당자이름', max_length=100)
-    department = models.CharField('담당자부서', max_length=100)
-    position = models.CharField('담당자직책', max_length=100)
-    phone_number = models.CharField('담당자핸드폰번호', max_length=100, )
-    email = models.EmailField("담당자_EMAIL", max_length=255)
+    department = models.CharField('담당자부서', blank=True, null=True, max_length=100)
+    position = models.CharField('담당자직책', blank=True, null=True, max_length=100)
+    # unique 하면 이상해짐
+    # phone_number_fields 한번 써보자!!!
+    phone_number = models.CharField('담당자핸드폰번호', max_length=100 )
+    email = models.EmailField("담당자_EMAIL", blank=True, null=True, max_length=255)
     created_date = models.DateTimeField('생성날짜', auto_now_add=True)
     updated_date = models.DateTimeField('업데이트된날짜', auto_now=True)
 

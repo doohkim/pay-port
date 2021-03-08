@@ -3,7 +3,8 @@ from django.db import transaction
 from rest_framework.serializers import ModelSerializer
 
 from common import check_owner_number
-from .excepts import BusinessLicenseNumberException
+from members.serializer_method_override import pay_go_manager_update_method
+from .excepts import BusinessLicenseNumberException, NotFoundManagerNumberException
 from .models import Owner, PayGoComputationalManager, ConnectOwnerManager
 from .serializer_method_override import owner_serializer_update_method
 
@@ -16,7 +17,7 @@ class PayGoComputationalManagerCreateSerializer(ModelSerializer):
 
 # 사업자 번호 등록 및 List && Create Serializer
 class OwnerSerializer(ModelSerializer):
-    pay_managers = PayGoComputationalManagerCreateSerializer(many=True, write_only=True, )
+    pay_managers = PayGoComputationalManagerCreateSerializer(many=True, required=False)
 
     class Meta:
         model = Owner
@@ -60,34 +61,23 @@ class OwnerSerializer(ModelSerializer):
     @transaction.atomic()
     def update(self, instance, validated_data):
         pay_managers = validated_data.pop('pay_managers', None)
-        instance = owner_serializer_update_method(instance, validated_data)
-        instance.save()
-
-        for manager in pay_managers:
-            manager_id = manager.get('id', None)
-            if manager_id:
-                manager_obj = PayGoComputationalManager.objects.get(id=manager_id)
-                ConnectOwnerManager.objects.create(manager=manager_obj, owner=instance)
-            else:
-                serializer = PayGoComputationalManagerCreateSerializer(data=manager)
-                if serializer.is_valid(raise_exception=True):
-                    serializer.save()
-                    manager_obj = PayGoComputationalManager.objects.get(phone_number=serializer.data['phone_number'])
-                    ConnectOwnerManager.objects.create(manager=manager_obj, owner=instance)
+        owner = owner_serializer_update_method(instance, validated_data)
+        owner.save()
+        if pay_managers:
+            for manager in pay_managers:
+                manager_phone_number = manager.get('phone_number', None)
+                # 아이디가 넘어 왔다면
+                if manager_phone_number:
+                    manager_obj = PayGoComputationalManager.objects.get(phone_number=manager_phone_number)
+                    manager_instance = pay_go_manager_update_method(manager_obj, manager)
+                    manager_instance.save()
+                    ConnectOwnerManager.objects.get_or_create(manager=manager_instance, owner=owner)
+                else:
+                    raise NotFoundManagerNumberException
+                    # serializer = PayGoComputationalManagerCreateSerializer(data=manager)
+                    # if serializer.is_valid(raise_exception=True):
+                    #     serializer.save()
+                    #     manager_obj = PayGoComputationalManager.objects.get(phone_number=serializer.data['phone_number'])
+                    #     ConnectOwnerManager.objects.create(manager=manager_obj, owner=owner)
         return instance
 
-# class PayGoComputationalManagerSerializer(ModelSerializer):
-#     class Meta:
-#         model = PayGoComputationalManager
-#         fields = '__all__'
-#
-#
-# class OwnerSerializer(ModelSerializer):
-#     pay_managers = PayGoComputationalManagerSerializer(many=True)
-#
-#     class Meta:
-#         model = Owner
-#         fields = '__all__'
-#         extra_kwargs = {
-#             'business_license_number': {'read_only': True}
-#         }
