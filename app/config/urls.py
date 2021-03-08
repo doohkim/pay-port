@@ -17,18 +17,17 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-from config import settings
+from config.settings import base as set
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
+    # path('', ),
     path('owners/', include('owners.urls')),
     path('members/', include('members.urls')),
 ]
 
-
 # settings.MEDIA_URL 대신 (settings.py삭제) 아래처럼 설정한다.
 urlpatterns += static(
-    settings.base.MEDIA_URL,
-    document_root=settings.base.MEDIA_ROOT
+    set.MEDIA_URL,
+    document_root=set.MEDIA_ROOT
 )

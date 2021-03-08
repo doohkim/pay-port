@@ -70,10 +70,9 @@ def copy_secrets():
 def server_cmd():
     ssh_run(f'sudo docker exec pay-port /usr/sbin/nginx -s stop', ignore_error=True)
     ssh_run(f'sudo docker exec pay-port python manage.py collectstatic --noinput')
-    print('거의 옴')
+    print('여기까지 문제 없음')
     ssh_run(f'sudo docker exec -it -d pay-port '
             f'supervisord -c /srv/iamport/.config/local_dev/supervisord.conf -n')
-    print('거의 옴')
 
 
 if __name__ == '__main__':
