@@ -21,8 +21,6 @@ class OwnerSerializer(ModelSerializer):
 
     class Meta:
         model = Owner
-        # fields = ('business_license_number', 'business_classification', 'business_name', 'business_main_item',
-        #           'application_route', 'sales_channel', 'pay_managers', 'call_contents')
         fields = '__all__'
 
     def validate(self, data):
@@ -42,9 +40,7 @@ class OwnerSerializer(ModelSerializer):
 
     @transaction.atomic()
     def create(self, validated_data):
-        # print(validated_data)
         pay_managers_data = validated_data.pop('pay_managers', None)
-        # print('pay_managers_data', pay_managers_data)
         owner = Owner.objects.create(**validated_data)
         if pay_managers_data:
             for manager in pay_managers_data:
@@ -70,7 +66,6 @@ class OwnerSerializer(ModelSerializer):
                 if manager_phone_number:
                     manager_obj = PayGoComputationalManager.objects.get(phone_number=manager_phone_number)
                     manager_instance = pay_go_manager_update_method(manager_obj, manager)
-                    manager_instance.save()
                     ConnectOwnerManager.objects.get_or_create(manager=manager_instance, owner=owner)
                 else:
                     raise NotFoundManagerNumberException

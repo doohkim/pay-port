@@ -36,7 +36,6 @@ class FranchiseeUserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         franchisee_managers_data = validated_data.pop('franchisee_managers', None)
         memos_data = validated_data.pop('memos', None)
-        print('memos_data', memos_data)
         franchisee_user = FranchiseeUser.objects.create(**validated_data)
         franchisee_user.set_password(validated_data['password'])
         franchisee_user.save()
@@ -69,13 +68,9 @@ class FranchiseeUserSerializer(serializers.ModelSerializer):
         franchisee_managers_data = validated_data.pop('franchisee_managers', None)
         memos_data = validated_data.pop('memos', None)
         f_user = franchisee_update_method(instance, validated_data)
-        print(f_user)
-        f_user.save()
-        print(franchisee_managers_data)
         if franchisee_managers_data:
             for manager in franchisee_managers_data:
                 manager_phone_number = manager.get('phone_number', None)
-                print(manager_phone_number)
                 if manager_phone_number:
                     manager_obj = PayGoComputationalManager.objects.get(phone_number=manager_phone_number)
                     manager_instance = pay_go_manager_update_method(manager_obj, manager)

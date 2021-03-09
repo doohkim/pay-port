@@ -18,7 +18,6 @@ def franchisee_update_method(instance, validated_data):
                                                            instance.pg_info_auto_save_or_not)
     instance.delivery_pay_or_not = validated_data.get('delivery_pay_or_not', instance.delivery_pay_or_not)
     instance.save()
-
     return instance
 
 
@@ -40,5 +39,4 @@ def memo_update_method(instance, validated_data):
     instance.payment_notice = validated_data.get('payment_notice', instance.payment_notice)
     instance.modify_text = validated_data.get('modify_text', instance.modify_text)
     instance.save()
-
     return instance
