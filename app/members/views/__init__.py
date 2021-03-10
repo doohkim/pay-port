@@ -1,1 +1,1 @@
-from franchisee_views import *
+from .franchisee_views import *

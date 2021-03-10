@@ -19,11 +19,15 @@ from django.urls import path, include
 
 from config.settings import base as set
 
+from rest_framework_simplejwt import views as jwt_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('', ),
     path('owners/', include('owners.urls')),
     path('members/', include('members.urls')),
+
+    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
 # settings.MEDIA_URL 대신 (settings.py삭제) 아래처럼 설정한다.

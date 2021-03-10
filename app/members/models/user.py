@@ -10,10 +10,12 @@ class PayGoUserManager(BaseUserManager):
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
+        return user
 
     def create_user(self, email=None, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
+        extra_fields.setdefault('user_type', PayGoUser.TYPE_NORMAL)
         return self._create_user(email, password, **extra_fields)
 
     def create_superuser(self, email, password, **extra_fields):
@@ -33,25 +35,26 @@ class PayGoUserManager(BaseUserManager):
 
 
 class PayGoUser(AbstractUser):
-    TYPE_STAFF, TYPE_AGENCY, TYPE_FRANCHISEE = 's', 'a', 'f'
+    TYPE_STAFF, TYPE_AGENCY, TYPE_FRANCHISEE, TYPE_NORMAL = 's', 'a', 'f', 'n'
     CHOICES_TYPE = (
         (TYPE_FRANCHISEE, '가맹점'),
         (TYPE_AGENCY, '에이전시'),
         (TYPE_STAFF, '관리자'),
+        (TYPE_NORMAL, '일반가입자'),
     )
     username = None
     # 아이디
-    mid = models.CharField("가맹점아이디_MID", unique=True, max_length=10)
-    gid = models.CharField("가맹점아이디_GID", max_length=10)
+    # mid = models.CharField("가맹점아이디_MID", blank=True, unique=True, max_length=10)
+    gid = models.CharField("가맹점아이디_GID", blank=True, null=True, max_length=10)
     # 로그인시 노출 되는 이름
-    mid_name = models.CharField("가맹점관리자_MID_name", max_length=20)
-    main_homepage = models.URLField("메인홈페이지_URL", blank=True, null=True),
+    mid_name = models.CharField("가맹점관리자_MID_name", blank=True, null=True, max_length=20)
+    main_homepage = models.URLField("메인홈페이지_URL", blank=True, null=True)
     sub_homepage = models.URLField("서브몰심사_URL", blank=True, null=True)
     # 아이디 활성화 여부
     is_active = models.BooleanField('활성화여부', default=True)
     user_type = models.CharField('타입', max_length=1, choices=CHOICES_TYPE, default=TYPE_FRANCHISEE)
     boss_name = models.CharField('보스이름', max_length=20, blank=True, null=True)
-    email = models.EmailField('이메일', max_length=100)
+    email = models.EmailField('이메일', unique=True, max_length=100)
     phone_number = models.CharField('전화번호', max_length=30, blank=True, null=True)
     fax_number = models.CharField("팩스번호", max_length=30, blank=True, null=True)
     store_joined_date = models.DateField("가맹점등록일자", auto_now_add=True)
@@ -75,11 +78,10 @@ class PayGoUser(AbstractUser):
                                                  through='ConnectPayGoUserManager', help_text="전산관리자")
     # settlement_account = models.ForeignKey('paymethod.SettlementAccount', on_delete=models.PROTECT, blank=True,
     #                                        null=True, related_name='paygousers', help_text='정산계좌등록')
-
     # paymentmethod = models.ManyToManyField('paymethod.PaymentMethod', related_name='paygousers', help_text="결제서비스정보")
 
-    USERNAME_FIELD = 'mid'
-    REQUIRED_FIELDS = ['email', ]
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
     objects = PayGoUserManager()
 
@@ -90,12 +92,17 @@ class PayGoUser(AbstractUser):
 
     def __str__(self):
         if self.user_type == self.TYPE_STAFF:
-            return f'[관리자유저] {self.mid_name} | 전화번호 : {self.phone_number}'
+            return f'[관리자유저] {self.email} | 유저타입 : {self.user_type}'
         elif self.user_type == self.TYPE_FRANCHISEE:
-            return f'[가맹점유저] {self.mid_name} | 전화번호 : {self.phone_number} '
+            return f'[가맹점유저] {self.email} | 유저타입 : {self.user_type}'
         elif self.user_type == self.TYPE_AGENCY:
-            return f'[에이전시유저] {self.mid_name} | 전화번호 : {self.phone_number} '
-        return f'{self.mid} | 로그인시 : {self.mid_name}'
+            return f'[에이전시유저] {self.email} | 유저타입 : {self.user_type}'
+        elif self.user_type == self.TYPE_NORMAL:
+            return f'[일반가입자] {self.email} | 유저타입 : {self.user_type}'
+        return f'{self.email} | 로그인시 : {self.user_type}'
+
+    def merchant_id(self):
+        return 'paygo'+f'{self.phone_number[-8:]}m'
 
 
 class ConnectPayGoUserManager(models.Model):
