@@ -58,7 +58,6 @@ class OwnerSerializer(ModelSerializer):
     def update(self, instance, validated_data):
         pay_managers = validated_data.pop('pay_managers', None)
         owner = owner_serializer_update_method(instance, validated_data)
-        owner.save()
         if pay_managers:
             for manager in pay_managers:
                 manager_phone_number = manager.get('phone_number', None)

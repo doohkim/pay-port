@@ -3,11 +3,14 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 
 from members.models import PayGoUser
-from paymethod.exceptions import SettlementAccountBadRequestException, SettlementInformationBadRequestException
+from paymethod.exceptions import SettlementAccountBadRequestException, SettlementInformationCreateBadRequestException, \
+    SettlementInformationUpdateBadRequestException
 from paymethod.models import SettlementAccount, SettlementInformation
 
-
 # 유저 정산 계좌 리스트
+from paymethod.serializers.serializer_instance_update_functions import settlement_info_serializer_update_method
+
+
 class SettlementAccountSerializer(ModelSerializer):
     class Meta:
         model = SettlementAccount
@@ -68,10 +71,25 @@ class SettlementInformationCreateSerializer(ModelSerializer):
             # 일부러 업데이트 방향으로 이끌기 위해 버그를 만들어 주었다.
             settlement_information = SettlementInformation.objects.create(
                 paygouser=validated_data['paygouser'],
-                electronic_tax_invoice_email=validated_data['electronic_tax_invoice_email']
+                electronic_tax_invoice_email=validated_data.get('electronic_tax_invoice_email', None),
+                settlement_use_or_not=validated_data.get('settlement_use_or_not', None),
+                fee_settlement_standard=validated_data.get('fee_settlement_standard', None),
+                fee_calculation_criteria=validated_data.get('fee_calculation_criteria', None),
+                fee_registration_criteria=validated_data.get('fee_registration_criteria', None),
+                debt_offset_use_or_not=validated_data.get('debt_offset_use_or_not', None),
+                cancel_function=validated_data.get('cancel_function', None),
+                settlement_type=validated_data.get('settlement_type', None),
+                settlement_method=validated_data.get('settlement_method', None),
+                restriction_on_cancellation_use_or_not=validated_data.get('restriction_on_cancellation_use_or_not',
+                                                                          None),
+                pending_amount_for_each_case=validated_data.get('pending_amount_for_each_case', None),
+                classification_of_issuing_tax_invoices=validated_data.get('classification_of_issuing_tax_invoices',
+                                                                          None),
+                standard_for_issuance_of_tax_invoice=validated_data.get('standard_for_issuance_of_tax_invoice',
+                                                                        None),
             )
         except Exception:
-            raise SettlementInformationBadRequestException
+            raise SettlementInformationCreateBadRequestException
         try:
             if settlement_account_data:
                 for account_data in settlement_account_data:
@@ -109,7 +127,6 @@ class SettlementInformationUpdateSerializer(ModelSerializer):
         model = SettlementInformation
         fields = (
             'settlement_account',
-            'paygouser',
             'settlement_use_or_not',
             'fee_settlement_standard',
             'fee_calculation_criteria',
@@ -125,6 +142,28 @@ class SettlementInformationUpdateSerializer(ModelSerializer):
             'standard_for_issuance_of_tax_invoice',
             'fee_settlement_standard',
         )
+
+    @transaction.atomic()
+    def update(self, instance, validated_data):
+        settlement_account_data = validated_data.pop('settlement_account')
+        try:
+            settlement_info_instance = settlement_info_serializer_update_method(instance, validated_data)
+        except Exception:
+            raise SettlementInformationUpdateBadRequestException
+        try:
+            if settlement_account_data:
+                for account_data in settlement_account_data:
+                    SettlementAccount.objects.create(
+                        bank=account_data.get('bank', None),
+                        account_holder=account_data.get('account_holder', None),
+                        account_number=account_data.get('account_number', None),
+                        applied_date=account_data.get('applied_date', None),
+                        end_date=account_data.get('end_date', None),
+                        settlement_information=settlement_info_instance,
+                    )
+        except Exception:
+            raise SettlementAccountBadRequestException
+        return settlement_info_instance
 
 
 # 유저 정산 계좌 Retrieve
