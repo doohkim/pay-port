@@ -75,4 +75,3 @@ class OwnerSerializer(ModelSerializer):
                     #     manager_obj = PayGoComputationalManager.objects.get(phone_number=serializer.data['phone_number'])
                     #     ConnectOwnerManager.objects.create(manager=manager_obj, owner=owner)
         return instance
-

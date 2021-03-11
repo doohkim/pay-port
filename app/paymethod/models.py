@@ -12,7 +12,7 @@ class PaymentMethod(models.Model):
         (RELAY, 're'),
     )
 
-    paygouser = models.ForeignKey(PayGoUser, on_delete=models.PROTECT, related_name='paymentmethods', help_text="가맹점주")
+    paygouser = models.ForeignKey(PayGoUser, on_delete=models.PROTECT, related_name='paymentmethods', help_text="유저")
     method_type = models.CharField('결제수단', max_length=100)
     service_use_or_not = models.BooleanField('결제서비스 사용여부', default=True)
     service_join_date = models.DateField('서비스등록일', default=date.today)
@@ -38,9 +38,9 @@ class PaymentMethod(models.Model):
 
 class PaymentMethodSettlementCycle(models.Model):
     NOT_SETTLED, IMMEDIATELY, DAY1, DAY2, DAY3, DAY4, DAY5, DAY6, DAY7, DAY8, DAY9, DAY10, DAY11, DAY12, DAY13, DAY14, \
-        DAY15, MONTH1, MONTH2, MONTH3, MONTH4 = 'not_settled', 'immediately', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', \
-                                                'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'M1', \
-                                                'M2', 'M3', 'M4'
+    DAY15, MONTH1, MONTH2, MONTH3, MONTH4 = 'not_settled', 'immediately', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', \
+                                            'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'M1', \
+                                            'M2', 'M3', 'M4'
     SETTLEMENT_CYCLE = (
         (NOT_SETTLED, 'not_settled'),
         (IMMEDIATELY, 'immediately'),
@@ -84,6 +84,7 @@ class PaymentMethodSettlementCycle(models.Model):
         return f'{self.cycle} | {self.applied_date}'
 
 
+# 정산정보
 class SettlementInformation(models.Model):
     PRE_CANCEL, POST_CANCEL = 'pre_cancel', 'post_cancel'
     CANCEL_STATUS = (
@@ -160,6 +161,7 @@ class SettlementInformation(models.Model):
         return f'{self.paygouser} |  {self.settlement_use_or_not}'
 
 
+# 정산계좌
 class SettlementAccount(models.Model):
     settlementinformation = models.ForeignKey(SettlementInformation, on_delete=models.PROTECT,
                                               related_name='settlementaccount', help_text='정산계좌')

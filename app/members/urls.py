@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import FranchiseeUserListCreateView, FranchiseeUserDetailView, FranchiseeUserUpdateView
-from .views.singup_views import SignUpAPIView, AuthTokenAPIVIew, PwdResetEmailAPIView, TokenSendEmailAPIView, \
-    AuthUserLoginView, HelloView
+from .views.normal_user_views import SignUpAPIView, AuthTokenAPIVIew, PwdResetEmailAPIView, TokenSendEmailAPIView, \
+    AuthUserLoginView, HelloView, UserLogoutAPIView
 from rest_framework_simplejwt import views as jwt_views
 
 urlpatterns = [
@@ -21,9 +21,12 @@ urlpatterns = [
     path('normal/send/', TokenSendEmailAPIView.as_view()),
     path('normal/pwdchange/', PwdResetEmailAPIView.as_view()),
 
-    path('hello/', HelloView.as_view(), name='hello'),
-
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 
+    # logout url
+    path('logout/', UserLogoutAPIView.as_view()),
+
+    # test url
+    path('hello/', HelloView.as_view(), name='hello'),
 ]

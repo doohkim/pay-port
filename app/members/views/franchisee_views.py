@@ -11,6 +11,7 @@ class FranchiseeUserListCreateView(generics.ListCreateAPIView):
     queryset = FranchiseeUser.objects.all()
     serializer_class = FranchiseeUserSerializer
 
+    # 리펙토링 필요
     # def get_serializer_class(self):
     #     if self.request.method == 'GET':
     #         return FranchiseeUser
@@ -37,3 +38,4 @@ class FranchiseeUserUpdateView(generics.UpdateAPIView):
         # requests.user로 수정 할 예정
         obj = get_object_or_404(FranchiseeUser, mid=self.request.data['mid'])
         return obj
+

@@ -1,8 +1,11 @@
 from rest_framework import status, generics, mixins
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from common import check_owner_number
+from .excepts import BusinessLicenseNumberException
 from .models import Owner, PayGoComputationalManager
 from .serializers import OwnerSerializer
 
@@ -21,6 +24,21 @@ class OwnerUpdateView(generics.UpdateAPIView):
         lookup_field = self.request.data['business_license_number']
         obj = get_object_or_404(queryset, business_license_number=lookup_field)
         return obj
+
+
+class OwnerNumberCheckView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated, ]
+
+    def post(self, request):
+        business_license_number = request.data['business_license_number']
+        result, boolean_result = check_owner_number(business_license_number)
+        data = {}
+        if boolean_result:
+            # 모델에 데이터 필드 추가하기
+            data['call_contents'] = result
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            raise BusinessLicenseNumberException
 
 # class OwnerListAPIView(APIView):
 #     # @staticmethod

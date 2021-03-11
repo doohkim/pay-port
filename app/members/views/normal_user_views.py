@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from members.models import PayGoUser
-from members.serializers.signup import SingUpSerializer, AuthSerializer, UserLoginSerializer
+from members.serializers.user_serializers import SingUpSerializer, AuthSerializer, UserLoginSerializer
 
 
 class SignUpAPIView(generics.CreateAPIView):
@@ -101,6 +101,10 @@ class PwdResetEmailAPIView(generics.GenericAPIView):
             'status': 'request was permitted'
         }
         return Response(content, status=status.HTTP_200_OK)
+
+
+class UserLogoutAPIView(generics.GenericAPIView):
+    pass
 
 
 class HelloView(generics.GenericAPIView):
