@@ -1,0 +1,166 @@
+from django.db import transaction
+from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
+
+from members.models import PayGoUser
+from paymethod.exceptions import SettlementAccountBadRequestException, SettlementInformationBadRequestException
+from paymethod.models import SettlementAccount, SettlementInformation
+
+
+# 유저 정산 계좌 리스트
+class SettlementAccountSerializer(ModelSerializer):
+    class Meta:
+        model = SettlementAccount
+        fields = '__all__'
+
+
+# 유저 정산정보 리스트
+class SettlementInformationSerializer(ModelSerializer):
+    settlement_account = SettlementAccountSerializer(many=True, required=False)
+
+    class Meta:
+        model = SettlementInformation
+        fields = '__all__'
+
+
+# 유저 정산 계좌 Create
+class SettlementAccountCreateSerializer(ModelSerializer):
+    class Meta:
+        model = SettlementAccount
+        fields = (
+            'bank',
+            'account_holder',
+            'account_number',
+            'applied_date',
+            'end_date'
+        )
+
+
+# 유저 정산정보 Create
+class SettlementInformationCreateSerializer(ModelSerializer):
+    settlement_account = SettlementAccountCreateSerializer(many=True, required=False)
+
+    class Meta:
+        model = SettlementInformation
+        fields = (
+            'settlement_account',
+            'settlement_use_or_not',
+            'fee_settlement_standard',
+            'fee_calculation_criteria',
+            'fee_registration_criteria',
+            'debt_offset_use_or_not',
+            'cancel_function',
+            'settlement_type',
+            'settlement_method',
+            'restriction_on_cancellation_use_or_not',
+            'pending_amount_for_each_case',
+            'electronic_tax_invoice_email',
+            'classification_of_issuing_tax_invoices',
+            'standard_for_issuance_of_tax_invoice',
+            'fee_settlement_standard',
+        )
+
+    @transaction.atomic()
+    def create(self, validated_data):
+        settlement_account_data = validated_data.pop('settlement_account')
+        try:
+            # get_or_create 로 다시 만들기를 하였을 때 버그가 안나게 할 수 있지만
+            # 일부러 업데이트 방향으로 이끌기 위해 버그를 만들어 주었다.
+            settlement_information = SettlementInformation.objects.create(
+                paygouser=validated_data['paygouser'],
+                electronic_tax_invoice_email=validated_data['electronic_tax_invoice_email']
+            )
+        except Exception:
+            raise SettlementInformationBadRequestException
+        try:
+            if settlement_account_data:
+                for account_data in settlement_account_data:
+                    SettlementAccount.objects.create(
+                        bank=account_data.get('bank', None),
+                        account_holder=account_data.get('account_holder', None),
+                        account_number=account_data.get('account_number', None),
+                        applied_date=account_data.get('applied_date', None),
+                        end_date=account_data.get('end_date', None),
+                        settlement_information=settlement_information,
+                    )
+        except Exception:
+            raise SettlementAccountBadRequestException
+        return settlement_information
+
+
+# 유저 정산 계좌 Update
+class SettlementAccountUpdateSerializer(ModelSerializer):
+    class Meta:
+        model = SettlementAccount
+        fields = (
+            'bank',
+            'account_holder',
+            'account_number',
+            'applied_date',
+            'end_date'
+        )
+
+
+# 유저 정산정보 Update
+class SettlementInformationUpdateSerializer(ModelSerializer):
+    settlement_account = SettlementAccountCreateSerializer(many=True, required=False)
+
+    class Meta:
+        model = SettlementInformation
+        fields = (
+            'settlement_account',
+            'paygouser',
+            'settlement_use_or_not',
+            'fee_settlement_standard',
+            'fee_calculation_criteria',
+            'fee_registration_criteria',
+            'debt_offset_use_or_not',
+            'cancel_function',
+            'settlement_type',
+            'settlement_method',
+            'restriction_on_cancellation_use_or_not',
+            'pending_amount_for_each_case',
+            'electronic_tax_invoice_email',
+            'classification_of_issuing_tax_invoices',
+            'standard_for_issuance_of_tax_invoice',
+            'fee_settlement_standard',
+        )
+
+
+# 유저 정산 계좌 Retrieve
+class SettlementAccountDetailSerializer(ModelSerializer):
+    class Meta:
+        model = SettlementAccount
+        fields = (
+            'bank',
+            'account_holder',
+            'account_number',
+            'applied_date',
+            'end_date'
+        )
+
+
+# 유저 정산정보 Retrieve
+class SettlementInformationDetailSerializer(ModelSerializer):
+    settlement_account = SettlementAccountCreateSerializer(many=True, required=False)
+
+    class Meta:
+        model = SettlementInformation
+        fields = (
+            'settlement_account',
+            'paygouser',
+            'settlement_use_or_not',
+            'fee_settlement_standard',
+            'fee_calculation_criteria',
+            'fee_registration_criteria',
+            'debt_offset_use_or_not',
+            'cancel_function',
+            'settlement_type',
+            'settlement_method',
+            'restriction_on_cancellation_use_or_not',
+            'pending_amount_for_each_case',
+            'electronic_tax_invoice_email',
+            'classification_of_issuing_tax_invoices',
+            'standard_for_issuance_of_tax_invoice',
+            'fee_settlement_standard',
+        )

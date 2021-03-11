@@ -33,7 +33,7 @@ class AuthTokenAPIVIew(generics.GenericAPIView):
         email = request.data['email']
         password = request.data['password']
         user = authenticate(email=email, password=password)
-        print(user)
+        # print(user)
         if user:
             token, _ = Token.objects.get_or_create(user=user)
         else:
@@ -55,7 +55,7 @@ class AuthUserLoginView(generics.GenericAPIView):
             }
             res = requests.post(url, data=data)
             refresh_access_token = res.json()
-
+            print(serializer.data)
             response = {
                 'success': True,
                 'statusCode': status_code,
@@ -63,6 +63,7 @@ class AuthUserLoginView(generics.GenericAPIView):
                 'access': serializer.data['access'],
                 'refresh': serializer.data['refresh'],
                 'authenticatedUser': {
+                    # 'id': serializer.data['id'],
                     'email': serializer.data['email'],
                     'refresh_access_token': refresh_access_token,
                     # 'time': datetime.now()
@@ -87,7 +88,6 @@ class TokenSendEmailAPIView(generics.GenericAPIView):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response('success', status=status.HTTP_200_OK)
 
 
 class PwdResetEmailAPIView(generics.GenericAPIView):
@@ -98,7 +98,7 @@ class PwdResetEmailAPIView(generics.GenericAPIView):
         request.user.set_password(password)
         request.user.save()
         content = {
-            'status': 'request was permitted'
+            'status': 'password changed success'
         }
         return Response(content, status=status.HTTP_200_OK)
 

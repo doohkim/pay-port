@@ -12,7 +12,7 @@ class PaymentMethod(models.Model):
         (RELAY, 're'),
     )
 
-    paygouser = models.ForeignKey(PayGoUser, on_delete=models.PROTECT, related_name='paymentmethods', help_text="유저")
+    paygouser = models.ForeignKey(PayGoUser, on_delete=models.PROTECT, related_name='payment_methods', help_text="유저")
     method_type = models.CharField('결제수단', max_length=100)
     service_use_or_not = models.BooleanField('결제서비스 사용여부', default=True)
     service_join_date = models.DateField('서비스등록일', default=date.today)
@@ -65,9 +65,8 @@ class PaymentMethodSettlementCycle(models.Model):
         (MONTH4, 'M4'),
 
     )
-    paymentmethodsettlementcycles = models.ForeignKey(PaymentMethod, on_delete=models.PROTECT,
-                                                      related_name='paymentmethodsettlementcycles',
-                                                      help_text="가맹점주")
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.PROTECT,
+                                       related_name='payment_method_settlement_cycles', help_text="결제수단")
     cycle = models.CharField('정산주기', choices=SETTLEMENT_CYCLE, max_length=20, default=DAY1)
     applied_date = models.DateField('적용일자', default=date.today)
     settlement_wait_time = models.PositiveIntegerField('정산대기시간', default=0)
@@ -127,9 +126,7 @@ class SettlementInformation(models.Model):
         (CALCULATE, 'calculate'),
         (PURCHASE, 'purchase'),
     )
-    paygouser = models.OneToOneField(PayGoUser, on_delete=models.PROTECT,
-                                     related_name='paygouser',
-                                     help_text="가맹점주")
+    paygouser = models.OneToOneField(PayGoUser, on_delete=models.PROTECT, related_name='settlement_informations', help_text="유저")
     # 에이전시, 가맹점주 각각 null=True 상태에서 각각받아주는 방법도 있다.
     # agency = models.OneToOneField(Agency, on_delete=models.PROTECT,
     #                                  related_name='agency',
@@ -137,7 +134,7 @@ class SettlementInformation(models.Model):
     settlement_use_or_not = models.BooleanField('정산사용여부', default=True)
     fee_settlement_standard = models.CharField('수수료정산기준', choices=CANCEL_STATUS, max_length=30, default=PRE_CANCEL)
     fee_calculation_criteria = models.CharField('수수료계산기준', choices=FEE_STANDARD, max_length=30, default=TRIMMING)
-    fee_registration_criteria = models.BooleanField('수수료등록기준_VAT포함_or_VAT미포함', default=True)
+    fee_registration_criteria = models.BooleanField('수수료등록기준_VAT_포함_or_VAT_미포함', default=True)
     debt_offset_use_or_not = models.BooleanField('채권상계', default=False)
     cancel_function = models.CharField('취소기능', max_length=30, choices=CANCEL_FUNCTION, default=CANCEL_POSSIBLE)
     settlement_type = models.CharField('정산유형', max_length=30, choices=SETTLEMENT_TYPE, default=NEXT_DAY)
@@ -158,18 +155,18 @@ class SettlementInformation(models.Model):
         verbose_name_plural = '%s 목록' % verbose_name
 
     def __str__(self):
-        return f'{self.paygouser} |  {self.settlement_use_or_not}'
+        return f'SettlementInformation 테이블 {self.paygouser} |  {self.settlement_use_or_not}'
 
 
 # 정산계좌
 class SettlementAccount(models.Model):
-    settlementinformation = models.ForeignKey(SettlementInformation, on_delete=models.PROTECT,
-                                              related_name='settlementaccount', help_text='정산계좌')
+    settlement_information = models.ForeignKey(SettlementInformation, on_delete=models.PROTECT,
+                                               related_name='settlement_account', help_text='정산계좌')
     bank = models.CharField('정산은행', max_length=50)
     account_holder = models.CharField('예금주', max_length=30)
     account_number = models.CharField('계좌번호', max_length=50)
-    applied_date = models.DateField('적용일자', default=date.today)
-    end_date = models.DateField('종료일자', default=dt(9999, 12, 30))
+    applied_date = models.DateField('적용일자', blank=True, null=True, default=date.today)
+    end_date = models.DateField('종료일자', blank=True, null=True, default=dt(9999, 12, 30))
     created_date = models.DateTimeField('생성날짜', auto_now_add=True)
     updated_date = models.DateTimeField('업데이트된날짜', auto_now=True)
 

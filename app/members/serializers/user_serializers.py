@@ -56,8 +56,10 @@ class UserLoginSerializer(serializers.Serializer):
             validation = {
                 'access': access_token,
                 'refresh': refresh_token,
-                'email': user.email
+                'email': user.email,
+                'id': user.id
             }
+            print(user.id)
             return validation
         except PayGoUser.DoesNotExist:
             raise AuthenticationFailed()
