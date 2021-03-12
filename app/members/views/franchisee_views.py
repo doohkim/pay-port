@@ -25,7 +25,7 @@ class FranchiseeUserDetailView(generics.RetrieveAPIView):
     serializer_class = FranchiseeUserSerializer
 
     def get_object(self):
-        f_user = get_object_or_404(FranchiseeUser, pk=self.kwargs['pk'])
+        f_user = get_object_or_404(FranchiseeUser, email=self.request.data['email'])
         return f_user
 
 
@@ -36,6 +36,6 @@ class FranchiseeUserUpdateView(generics.UpdateAPIView):
 
     def get_object(self):
         # requests.user로 수정 할 예정
-        obj = get_object_or_404(FranchiseeUser, mid=self.request.data['mid'])
+        obj = get_object_or_404(FranchiseeUser, email=self.request.data['email'])
         return obj
 

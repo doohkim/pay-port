@@ -68,6 +68,7 @@ class OwnerSerializer(ModelSerializer):
                     ConnectOwnerManager.objects.get_or_create(manager=manager_instance, owner=owner)
                 else:
                     raise NotFoundManagerNumberException
+                    # 필요 없음을 느끼는데 이유를 못찾음
                     # serializer = PayGoComputationalManagerCreateSerializer(data=manager)
                     # if serializer.is_valid(raise_exception=True):
                     #     serializer.save()

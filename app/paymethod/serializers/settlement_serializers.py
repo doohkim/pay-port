@@ -1,8 +1,6 @@
 from django.db import transaction
 from rest_framework.serializers import ModelSerializer
-from rest_framework import serializers
 
-from members.models import PayGoUser
 from paymethod.exceptions import SettlementAccountBadRequestException, SettlementInformationCreateBadRequestException, \
     SettlementInformationUpdateBadRequestException
 from paymethod.models import SettlementAccount, SettlementInformation
@@ -30,6 +28,7 @@ class SettlementInformationSerializer(ModelSerializer):
 class SettlementAccountCreateSerializer(ModelSerializer):
     class Meta:
         model = SettlementAccount
+
         fields = (
             'bank',
             'account_holder',
@@ -37,6 +36,17 @@ class SettlementAccountCreateSerializer(ModelSerializer):
             'applied_date',
             'end_date'
         )
+
+    def validate(self, attrs):
+        # 계좌번호에 1004 넣고 취소하는 작업 필요!
+        print('계좌번호 확인 필요? 유저 정산계좌 테이블', attrs)
+        # if SettlementAccount.objects.filter(account_number=attrs['account_number']).exists():
+        #     raise serializers.ValidationError({'account_number': 'account_number already exist'})
+        return attrs
+
+    def get_unique_together_validators(self):
+        """Overriding method to disable unique together checks"""
+        return []
 
 
 # 유저 정산정보 Create
@@ -66,6 +76,7 @@ class SettlementInformationCreateSerializer(ModelSerializer):
     @transaction.atomic()
     def create(self, validated_data):
         settlement_account_data = validated_data.pop('settlement_account')
+        print(settlement_account_data)
         try:
             # get_or_create 로 다시 만들기를 하였을 때 버그가 안나게 할 수 있지만
             # 일부러 업데이트 방향으로 이끌기 위해 버그를 만들어 주었다.
@@ -88,12 +99,13 @@ class SettlementInformationCreateSerializer(ModelSerializer):
                 standard_for_issuance_of_tax_invoice=validated_data.get('standard_for_issuance_of_tax_invoice',
                                                                         None),
             )
-        except Exception:
+        except Exception as e:
+            print('정산정보 만들때 에러', e)
             raise SettlementInformationCreateBadRequestException
         try:
             if settlement_account_data:
                 for account_data in settlement_account_data:
-                    SettlementAccount.objects.create(
+                    SettlementAccount.objects.get_or_create(
                         bank=account_data.get('bank', None),
                         account_holder=account_data.get('account_holder', None),
                         account_number=account_data.get('account_number', None),
@@ -101,7 +113,8 @@ class SettlementInformationCreateSerializer(ModelSerializer):
                         end_date=account_data.get('end_date', None),
                         settlement_information=settlement_information,
                     )
-        except Exception:
+        except Exception as e:
+            print('정산계좌 만들 때 에러', e)
             raise SettlementAccountBadRequestException
         return settlement_information
 
@@ -118,10 +131,19 @@ class SettlementAccountUpdateSerializer(ModelSerializer):
             'end_date'
         )
 
+    def validated(self, attrs):
+        # 계좌번호에 1004 넣고 취소하는 작업 필요!
+        print('계좌번호 확인 필요?')
+        return attrs
+
+    def get_unique_together_validators(self):
+        """Overriding method to disable unique together checks"""
+        return []
+
 
 # 유저 정산정보 Update
 class SettlementInformationUpdateSerializer(ModelSerializer):
-    settlement_account = SettlementAccountCreateSerializer(many=True, required=False)
+    settlement_account = SettlementAccountUpdateSerializer(many=True, required=False)
 
     class Meta:
         model = SettlementInformation
@@ -153,7 +175,7 @@ class SettlementInformationUpdateSerializer(ModelSerializer):
         try:
             if settlement_account_data:
                 for account_data in settlement_account_data:
-                    SettlementAccount.objects.create(
+                    SettlementAccount.objects.get_or_create(
                         bank=account_data.get('bank', None),
                         account_holder=account_data.get('account_holder', None),
                         account_number=account_data.get('account_number', None),
@@ -161,7 +183,8 @@ class SettlementInformationUpdateSerializer(ModelSerializer):
                         end_date=account_data.get('end_date', None),
                         settlement_information=settlement_info_instance,
                     )
-        except Exception:
+        except Exception as e:
+            print('정산계좌 update 에러', e)
             raise SettlementAccountBadRequestException
         return settlement_info_instance
 

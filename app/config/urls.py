@@ -22,7 +22,7 @@ from config.settings import base as set
 from rest_framework_simplejwt import views as jwt_views
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('', ),
+
     path('owners/', include('owners.urls')),
     path('members/', include('members.urls')),
     path('paymethod/', include('paymethod.urls')),
