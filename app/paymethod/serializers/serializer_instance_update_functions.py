@@ -22,3 +22,22 @@ def settlement_info_serializer_update_method(instance, validated_data):
                                                                        instance.standard_for_issuance_of_tax_invoice)
     instance.save()
     return instance
+
+
+def payment_method_serializer_update_method(instance, validated_data):
+    instance.method_type = validated_data.get('method_type',
+                                              instance.method_type)
+    instance.service_use_or_not = validated_data.get('service_use_or_not', instance.service_use_or_not)
+    instance.service_join_date = validated_data.get('service_join_date', instance.service_join_date)
+    instance.store_type = validated_data.get('store_type', instance.store_type)
+    instance.authentication_method = validated_data.get('authentication_method', instance.authentication_method)
+    instance.partial_cancellation_or_not = validated_data.get('partial_cancellation_or_not',
+                                                              instance.partial_cancellation_or_not)
+    instance.payment_use_or_not = validated_data.get('payment_use_or_not', instance.payment_use_or_not)
+    instance.shipping_destination_use_or_not = validated_data.get('shipping_destination_use_or_not',
+                                                                  instance.shipping_destination_use_or_not)
+    instance.offline_cat_id = validated_data.get('offline_cat_id', instance.offline_cat_id)
+    instance.card_information_save_use_or_not = validated_data.get('card_information_save_use_or_not',
+                                                                   instance.card_information_save_use_or_not)
+    instance.save()
+    return instance

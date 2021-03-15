@@ -16,7 +16,8 @@ class PaymentMethod(models.Model):
     method_type = models.CharField('결제수단', max_length=100)
     service_use_or_not = models.BooleanField('결제서비스 사용여부', blank=True, null=True, default=True)
     service_join_date = models.DateField('서비스등록일', blank=True, null=True, default=date.today)
-    store_type = models.CharField('가맹점유형', blank=True, null=True, choices=FRANCHISEE_TYPE, max_length=2, default=AGENCIES)
+    store_type = models.CharField('가맹점유형', blank=True, null=True, choices=FRANCHISEE_TYPE, max_length=2,
+                                  default=AGENCIES)
     authentication_method = models.CharField('인증방식', blank=True, null=True, max_length=100, default='Keyln')
     partial_cancellation_or_not = models.BooleanField('부분취소사용여부', blank=True, null=True, default=True)
     payment_use_or_not = models.BooleanField('SMS_결제사용여부', blank=True, null=True, default=True)
@@ -126,19 +127,25 @@ class SettlementInformation(models.Model):
         (CALCULATE, 'calculate'),
         (PURCHASE, 'purchase'),
     )
-    paygouser = models.OneToOneField(PayGoUser, on_delete=models.PROTECT, related_name='settlement_informations', help_text="유저")
+    paygouser = models.OneToOneField(PayGoUser, on_delete=models.PROTECT, related_name='settlement_informations',
+                                     help_text="유저")
     # 에이전시, 가맹점주 각각 null=True 상태에서 각각받아주는 방법도 있다.
     # agency = models.OneToOneField(Agency, on_delete=models.PROTECT,
     #                                  related_name='agency',
     #                                  help_text="에이전시")
     settlement_use_or_not = models.BooleanField('정산사용여부', blank=True, null=True, default=True)
-    fee_settlement_standard = models.CharField('수수료정산기준', blank=True, null=True, choices=CANCEL_STATUS, max_length=30, default=PRE_CANCEL)
-    fee_calculation_criteria = models.CharField('수수료계산기준', blank=True, null=True, choices=FEE_STANDARD, max_length=30, default=TRIMMING)
+    fee_settlement_standard = models.CharField('수수료정산기준', blank=True, null=True, choices=CANCEL_STATUS, max_length=30,
+                                               default=PRE_CANCEL)
+    fee_calculation_criteria = models.CharField('수수료계산기준', blank=True, null=True, choices=FEE_STANDARD, max_length=30,
+                                                default=TRIMMING)
     fee_registration_criteria = models.BooleanField('수수료등록기준_VAT_포함_or_VAT_미포함', blank=True, null=True, default=True)
     debt_offset_use_or_not = models.BooleanField('채권상계', blank=True, null=True, default=False)
-    cancel_function = models.CharField('취소기능', max_length=30, blank=True, null=True, choices=CANCEL_FUNCTION, default=CANCEL_POSSIBLE)
-    settlement_type = models.CharField('정산유형', max_length=30, blank=True, null=True, choices=SETTLEMENT_TYPE, default=NEXT_DAY)
-    settlement_method = models.CharField('정산방법', max_length=30, blank=True, null=True, choices=SETTLEMENT_METHOD, default=MID_SETTLEMENT)
+    cancel_function = models.CharField('취소기능', max_length=30, blank=True, null=True, choices=CANCEL_FUNCTION,
+                                       default=CANCEL_POSSIBLE)
+    settlement_type = models.CharField('정산유형', max_length=30, blank=True, null=True, choices=SETTLEMENT_TYPE,
+                                       default=NEXT_DAY)
+    settlement_method = models.CharField('정산방법', max_length=30, blank=True, null=True, choices=SETTLEMENT_METHOD,
+                                         default=MID_SETTLEMENT)
     restriction_on_cancellation_use_or_not = models.BooleanField('채권방지 취소제한', blank=True, null=True, default=False)
     pending_amount_for_each_case = models.IntegerField('건별지금보류금액', blank=True, null=True, default=0)
     electronic_tax_invoice_email = models.EmailField('전자세금계산서_EMAIL', blank=True, null=True, max_length=100)

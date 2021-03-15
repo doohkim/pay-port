@@ -33,3 +33,16 @@ class PaymentMethodSettlementCycleCreateBadRequestException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = '결제 수단 정산 주기 Create 에러'
     default_code = 'Payment Method Create'
+
+
+class PaymentMethodUpdateBadRequestException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = '결제 수단 데이터 Update 에러'
+    default_code = 'Payment Method Update'
+
+
+class PaymentMethodSettlementCycleUpdateBadRequestException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = '결제 수단 정산 주기 Update 에러'
+    default_code = 'Payment Method Update'
+
