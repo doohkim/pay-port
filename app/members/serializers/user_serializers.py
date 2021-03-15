@@ -59,7 +59,12 @@ class UserLoginSerializer(serializers.Serializer):
                 'email': user.email,
                 'id': user.id
             }
-            print(user.id)
             return validation
         except PayGoUser.DoesNotExist:
             raise AuthenticationFailed()
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PayGoUser
+        fields = '__all__'

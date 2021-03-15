@@ -7,12 +7,14 @@ from django.core.mail import EmailMessage
 from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from members.models import PayGoUser
-from members.serializers.user_serializers import SingUpSerializer, AuthSerializer, UserLoginSerializer
+from members.serializers.user_serializers import SingUpSerializer, AuthSerializer, UserLoginSerializer, \
+    UserDetailSerializer
 
 
 class SignUpAPIView(generics.CreateAPIView):
@@ -105,6 +107,18 @@ class PwdResetEmailAPIView(generics.GenericAPIView):
 
 class UserLogoutAPIView(generics.GenericAPIView):
     pass
+
+
+class UserDetailAPIView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated, ]
+    queryset = PayGoUser.objects.all()
+    serializer_class = UserDetailSerializer
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, email=self.request.user.email)
+        return obj
+
 
 
 class HelloView(generics.GenericAPIView):

@@ -76,7 +76,6 @@ class SettlementInformationCreateSerializer(ModelSerializer):
     @transaction.atomic()
     def create(self, validated_data):
         settlement_account_data = validated_data.pop('settlement_account')
-        print(settlement_account_data)
         try:
             # get_or_create 로 다시 만들기를 하였을 때 버그가 안나게 할 수 있지만
             # 일부러 업데이트 방향으로 이끌기 위해 버그를 만들어 주었다.

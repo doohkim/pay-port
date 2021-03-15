@@ -30,7 +30,7 @@ class PaymentMethod(models.Model):
     class Meta:
         unique_together = ('paygouser', 'method_type')
         ordering = ['-pk']
-        verbose_name = '결제서비스'
+        verbose_name = '결제서비스 정보'
         verbose_name_plural = '%s 목록' % verbose_name
 
     def __str__(self):
@@ -179,7 +179,7 @@ class SettlementAccount(models.Model):
 
     class Meta:
         ordering = ['-pk']
-        verbose_name = '정산계좌 등록'
+        verbose_name = '정산계좌'
         verbose_name_plural = '%s 목록' % verbose_name
         unique_together = ['bank', 'account_number']
 

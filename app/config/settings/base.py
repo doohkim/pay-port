@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'members.apps.MembersConfig',
     'owners.apps.OwnersConfig',
     'paymethod.apps.PaymethodConfig',
+    'payments.apps.PaymentsConfig',
 
     'django_extensions',
     'rest_framework',

@@ -1,12 +1,12 @@
-from rest_framework import status, generics, mixins
+from rest_framework import status, generics
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from common import check_owner_number
+
 from .excepts import BusinessLicenseNumberException
-from .models import Owner, PayGoComputationalManager
+from .models import Owner
 from .serializers import OwnerSerializer
 
 
