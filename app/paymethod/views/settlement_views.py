@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
-from paymethod.models import SettlementInformation, SettlementAccount
+from paymethod.models import SettlementInformation
 from paymethod.serializers import SettlementInformationSerializer, SettlementInformationCreateSerializer, \
     SettlementInformationUpdateSerializer
 
@@ -20,10 +20,21 @@ class SettlementInformationListCreateAPIVew(generics.ListCreateAPIView):
         serializer.save(paygouser=self.request.user)
 
 
-class SettlementInformationUpdate(generics.UpdateAPIView):
+class SettlementInformationUpdateAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = SettlementInformation.objects.all()
     serializer_class = SettlementInformationUpdateSerializer
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, paygouser=self.request.user)
+        return obj
+
+
+class SettlementInformationRetrieveAPIView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = SettlementInformation.objects.all()
+    serializer_class = SettlementInformationSerializer
 
     def get_object(self):
         queryset = self.get_queryset()
