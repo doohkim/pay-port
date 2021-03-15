@@ -67,4 +67,6 @@ class UserLoginSerializer(serializers.Serializer):
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = PayGoUser
-        fields = '__all__'
+        exclude = [
+            'password',
+        ]
