@@ -151,3 +151,17 @@ class PaymentMethodUpdateSerializer(ModelSerializer):
             print('결제 수단 정산 주기', e)
             raise PaymentMethodSettlementCycleUpdateBadRequestException
         return payment_method_instance
+
+
+
+class PaymentMethodOnlySerializer(ModelSerializer):
+
+    class Meta:
+        model = PaymentMethod
+        fields = '__all__'
+
+class PaymentMethodSettlementCycleOnlySerializer(ModelSerializer):
+    payment_method = PaymentMethodOnlySerializer()
+    class Meta:
+        model = PaymentMethodSettlementCycle
+        fields = '__all__'

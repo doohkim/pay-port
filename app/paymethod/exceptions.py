@@ -46,3 +46,16 @@ class PaymentMethodSettlementCycleUpdateBadRequestException(APIException):
     default_detail = '결제 수단 정산 주기 Update 에러'
     default_code = 'Payment Method Update'
 
+
+class SettlementAccountListBadRequestException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = '정산정보-정산계좌 List API 정산계좌가 존재하지 않습니다. ' \
+                     '정산정보에 정산계좌 정보를 만들어야 합니다.'
+    default_code = 'SettlementAccount List'
+
+
+class PaymentMethodSettlementCycleListBadRequestException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = '결제서비스 정보 API List API 정산주기가 존재하지 않습니다. ' \
+                     '결제서비스 정보 안에  정산주기 정보를 만들어야 합니다.'
+    default_code = 'PaymentMethodSettlementCycle List'
