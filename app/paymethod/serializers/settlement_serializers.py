@@ -28,7 +28,8 @@ class SettlementInformationSerializer(ModelSerializer):
 class SettlementAccountCreateSerializer(ModelSerializer):
     class Meta:
         model = SettlementAccount
-
+        # applied_date 와 end_date 를 제외해준 이유는 null=True 로 null 값이 들어가기 때문에
+        # 제외해서 default 값이 들어가도록 한 것이다.
         fields = (
             'bank',
             'account_holder',
@@ -36,6 +37,7 @@ class SettlementAccountCreateSerializer(ModelSerializer):
             'applied_date',
             'end_date'
         )
+        validators = []
 
     def validate(self, attrs):
         # 계좌번호에 1004 넣고 취소하는 작업 필요!

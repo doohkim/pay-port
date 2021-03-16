@@ -172,8 +172,8 @@ class SettlementAccount(models.Model):
     bank = models.CharField('정산은행', max_length=50)
     account_holder = models.CharField('예금주', max_length=30)
     account_number = models.CharField('계좌번호', max_length=50)
-    applied_date = models.DateField('적용일자', blank=True, null=True, default=date.today)
-    end_date = models.DateField('종료일자', blank=True, null=True, default=dt(9999, 12, 30))
+    applied_date = models.DateField('적용일자', default=date.today)
+    end_date = models.DateField('종료일자', default=dt(9999, 12, 30))
     created_date = models.DateTimeField('생성날짜', auto_now_add=True)
     updated_date = models.DateTimeField('업데이트된날짜', auto_now=True)
 

@@ -13,6 +13,7 @@ class Payment(models.Model):
         (CANCEL, 'cancel'),
     )
     paygouser = models.ForeignKey(PayGoUser, on_delete=models.PROTECT, related_name='payments', help_text='유저')
+    # 주문 번호 밑에 def static 만드는거 어떤가?
     order_number = models.CharField('주문번호', max_length=25, default='PAYGO' + datetime.now().strftime('%H%M%S%f'))
     goods_name = models.CharField('상품_이름', max_length=50)
     card_num = models.CharField('카드숫자', max_length=30)

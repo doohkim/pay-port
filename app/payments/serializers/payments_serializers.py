@@ -38,7 +38,6 @@ class PaymentCreateSerializer(ModelSerializer):
         )
 
     def validate(self, attrs):
-        print('validate', attrs)
         obj = Payment.objects.filter(
             order_number=attrs['order_number']
         )
