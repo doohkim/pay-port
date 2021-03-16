@@ -68,12 +68,11 @@ class PaymentMethodSettlementCycleCreateAPIView(CreateAPIView):
     queryset = PaymentMethodSettlementCycle.objects.all()
 
     def perform_create(self, serializer):
+        # 명확히 어떤 결제서비스의 종류인지 보내줘야 함.
         method_type = self.request.data['method_type']
         # method_type = '신용카드'
         payment_method_objest = PaymentMethod.objects.get(
             paygouser=self.request.user,
             method_type=method_type
         )
-        # 명확히 어떤 결제서비스의 종류인지 보내줘야 함.
-
         serializer.save(payment_method=payment_method_objest)
