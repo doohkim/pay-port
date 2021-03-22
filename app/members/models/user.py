@@ -13,6 +13,7 @@ class PayGoUserManager(BaseUserManager):
         return user
 
     def create_user(self, email=None, password=None, **extra_fields):
+        print('model')
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
         extra_fields.setdefault('user_type', PayGoUser.TYPE_NORMAL)

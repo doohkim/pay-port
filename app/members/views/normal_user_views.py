@@ -14,13 +14,22 @@ from rest_framework.views import APIView
 
 from members.models import PayGoUser
 from members.serializers.user_serializers import SingUpSerializer, AuthSerializer, UserLoginSerializer, \
-    UserDetailSerializer
+    UserDetailSerializer, RegisterSerializer
 
 
 class SignUpAPIView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
     queryset = PayGoUser.objects.all()
     serializer_class = SingUpSerializer
+
+    def perform_create(self, serializer):
+        user = serializer.save()
+        Token.objects.create(user=user)
+
+class RegisterAPIView(generics.CreateAPIView):
+    permission_classes = (AllowAny,)
+    queryset = PayGoUser.objects.all()
+    serializer_class = RegisterSerializer
 
     def perform_create(self, serializer):
         user = serializer.save()
@@ -48,10 +57,11 @@ class AuthUserLoginView(generics.GenericAPIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
+        print(request.data)
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             status_code = status.HTTP_200_OK
-            url = 'http://127.0.0.1:8000/api/token/refresh/'
+            url = 'http://13.125.1.183/api/token/refresh/'
             data = {
                 "refresh": serializer.data['refresh']
             }

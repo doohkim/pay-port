@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import FranchiseeUserListCreateView, FranchiseeUserDetailView, FranchiseeUserUpdateView
 from .views.normal_user_views import SignUpAPIView, AuthTokenAPIVIew, PwdResetEmailAPIView, TokenSendEmailAPIView, \
-    AuthUserLoginView, HelloView, UserLogoutAPIView, UserDetailAPIView
+    AuthUserLoginView, HelloView, UserLogoutAPIView, UserDetailAPIView, RegisterAPIView
 from rest_framework_simplejwt import views as jwt_views
 
 urlpatterns = [
@@ -12,6 +12,8 @@ urlpatterns = [
     path('franchisee/update/', FranchiseeUserUpdateView.as_view(), ),
     # 사이트에서 회원가입
     path('normal/signup/', SignUpAPIView.as_view()),
+    # 회원가입
+    path('normal/register/', RegisterAPIView.as_view()),
     # 로그인 1
     path('normal/login/', AuthTokenAPIVIew.as_view()),
     # 로그인 2(평상시 확정)

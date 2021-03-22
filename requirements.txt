@@ -91,12 +91,18 @@ decorator==4.4.2; python_version >= "3.7" and python_full_version < "3.0.0" or p
 defusedxml==0.6.0; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.6" \
     --hash=sha256:6687150770438374ab581bb7a1b327a847dd9c5749e396102de3fad4e8a3ef93 \
     --hash=sha256:f684034d135af4c6cbb949b8a4d2ed61634515257a67299e5f940fbaa34377f5
+django-cors-headers==3.7.0; python_version >= "3.6" \
+    --hash=sha256:96069c4aaacace786a34ee7894ff680780ec2644e4268b31181044410fecd12e \
+    --hash=sha256:1ac2b1213de75a251e2ba04448da15f99bcfcbe164288ae6b5ff929dc49b372f
 django-extensions==3.1.0; python_version >= "3.5" \
     --hash=sha256:7cd002495ff0a0e5eb6cdd6be759600905b4e4079232ea27618fc46bdd853651 \
     --hash=sha256:c7f88625a53f631745d4f2bef9ec4dcb999ed59476393bdbbe99db8596778846
 django==2.2.17; python_version >= "3.5" \
     --hash=sha256:558cb27930defd9a6042133258caf797b2d1dee233959f537e3dc475cb49bd7c \
     --hash=sha256:cf5370a4d7765a9dd6d42a7b96b53c74f9446cd38209211304b210fe0404b861
+djangorestframework-simplejwt==4.6.0; python_version >= "3.7" \
+    --hash=sha256:bd587700b6ab34a6c6b12d426cce4fa580d57ef1952ad4ba3b79707784619ed3 \
+    --hash=sha256:7adc913ba0d2ed7f46e0b9bf6e86f9bd9248f1c4201722b732b8213e0ea66f9f
 djangorestframework==3.12.2; python_version >= "3.5" \
     --hash=sha256:0209bafcb7b5010fdfec784034f059d512256424de2a0f084cb82b096d6dd6a7
 entrypoints==0.3; python_version >= "3.6" \
@@ -222,6 +228,9 @@ pycparser==2.20; python_version >= "3.5" and python_full_version < "3.0.0" or py
 pygments==2.7.4; python_version >= "3.7" \
     --hash=sha256:bc9591213a8f0e0ca1a5e68a479b4887fdc3e75d0774e5c71c31920c427de435 \
     --hash=sha256:df49d09b498e83c1a73128295860250b0b7edd4c723a32e9bc0d295c7c2ec337
+pyjwt==2.0.1; python_version >= "3.7" \
+    --hash=sha256:b70b15f89dc69b993d8a8d32c299032d5355c82f9b5b7e851d1a6d706dffe847 \
+    --hash=sha256:a5c70a06e1f33d81ef25eecd50d50bd30e34de1ca8b2b9fa3fe0daaabcf69bf7
 pyparsing==2.4.7; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.6" \
     --hash=sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b \
     --hash=sha256:c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1
