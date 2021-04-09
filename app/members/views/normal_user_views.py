@@ -13,18 +13,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from members.models import PayGoUser
-from members.serializers.user_serializers import SingUpSerializer, AuthSerializer, UserLoginSerializer, \
+from members.serializers.user_serializers import AuthSerializer, UserLoginSerializer, \
     UserDetailSerializer, RegisterSerializer
 
-
-class SignUpAPIView(generics.CreateAPIView):
-    permission_classes = (AllowAny,)
-    queryset = PayGoUser.objects.all()
-    serializer_class = SingUpSerializer
-
-    def perform_create(self, serializer):
-        user = serializer.save()
-        Token.objects.create(user=user)
 
 class RegisterAPIView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
@@ -49,7 +40,12 @@ class AuthTokenAPIVIew(generics.GenericAPIView):
             token, _ = Token.objects.get_or_create(user=user)
         else:
             return AuthenticationFailed()
-        return Response(data={'token': token.key}, status=status.HTTP_200_OK)
+        data = {
+            'token': token.key,
+            'email': user.email,
+            'username': user.email.split('@')[0]
+        }
+        return Response(data=data, status=status.HTTP_200_OK)
 
 
 class AuthUserLoginView(generics.GenericAPIView):
@@ -57,7 +53,6 @@ class AuthUserLoginView(generics.GenericAPIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
-        print(request.data)
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             status_code = status.HTTP_200_OK
@@ -67,23 +62,36 @@ class AuthUserLoginView(generics.GenericAPIView):
             }
             res = requests.post(url, data=data)
             refresh_access_token = res.json()
-            print(serializer.data)
             response = {
                 'success': True,
                 'statusCode': status_code,
                 'message': 'User logged in successfully',
                 'access': serializer.data['access'],
                 'refresh': serializer.data['refresh'],
+                'email': serializer.data['email'],
                 'authenticatedUser': {
-                    # 'id': serializer.data['id'],
                     'email': serializer.data['email'],
                     'refresh_access_token': refresh_access_token,
-                    # 'time': datetime.now()
                 }
             }
             return Response(response, status=status_code)
         else:
             return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class UserTokenTestAPIView(generics.GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = PayGoUser.objects.all()
+    serializer_class = UserDetailSerializer
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, email=self.request.data['email'])
+        return obj
+
+    def post(self, request):
+        serializer = self.serializer_class(self.get_object())
+        return Response(serializer.data)
 
 
 class TokenSendEmailAPIView(generics.GenericAPIView):
@@ -130,10 +138,53 @@ class UserDetailAPIView(generics.RetrieveAPIView):
         return obj
 
 
-
 class HelloView(generics.GenericAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         content = {'message': 'Hello, World!'}
         return Response(content)
+
+
+class CheckView(generics.RetrieveAPIView):
+    permission_classes = (AllowAny,)
+    queryset = PayGoUser.objects.all()
+    serializer_class = UserDetailSerializer
+
+    def get_object(self):
+        obj = self.queryset.first()
+        return obj
+
+
+# class RestTokenCheckView(generics.RetrieveAPIView):
+#     permission_classes = (IsAuthenticated,)
+#     queryset = PayGoUser.objects.all()
+#     serializer_class = UserDetailSerializer
+#
+#     def get_object(self):
+#         user = self.request.user
+#         if user:
+#             token, _ = Token.objects.get_or_create(user=user)
+#         else:
+#             return AuthenticationFailed()
+#         return user
+
+
+class RestTokenCheckView(generics.GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = PayGoUser.objects.all()
+    serializer_class = UserDetailSerializer
+
+    def get(self, request):
+        user = self.request.user
+        if user:
+            token, _ = Token.objects.get_or_create(user=user)
+        else:
+            return AuthenticationFailed()
+
+        data = {
+            'token': token.key,
+            'email': user.email,
+            'username': user.email.split('@')[0]
+        }
+        return Response(data=data, status=status.HTTP_200_OK)

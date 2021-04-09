@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import FranchiseeUserListCreateView, FranchiseeUserDetailView, FranchiseeUserUpdateView
-from .views.normal_user_views import SignUpAPIView, AuthTokenAPIVIew, PwdResetEmailAPIView, TokenSendEmailAPIView, \
-    AuthUserLoginView, HelloView, UserLogoutAPIView, UserDetailAPIView, RegisterAPIView
+from .views.normal_user_views import AuthTokenAPIVIew, PwdResetEmailAPIView, TokenSendEmailAPIView, \
+    AuthUserLoginView, HelloView, UserLogoutAPIView, UserDetailAPIView, RegisterAPIView, UserTokenTestAPIView, \
+    CheckView, RestTokenCheckView
 from rest_framework_simplejwt import views as jwt_views
 
 urlpatterns = [
@@ -11,7 +12,7 @@ urlpatterns = [
     path('franchisee/detail/<int:pk>/', FranchiseeUserDetailView.as_view(), ),
     path('franchisee/update/', FranchiseeUserUpdateView.as_view(), ),
     # 사이트에서 회원가입
-    path('normal/signup/', SignUpAPIView.as_view()),
+    # path('normal/signup/', SignUpAPIView.as_view()),
     # 회원가입
     path('normal/register/', RegisterAPIView.as_view()),
     # 로그인 1
@@ -32,4 +33,8 @@ urlpatterns = [
 
     # test url
     path('hello/', HelloView.as_view(), name='hello'),
+    path('test/', UserTokenTestAPIView.as_view()),
+    path('check/', CheckView.as_view()),
+    path('rest_check/', RestTokenCheckView.as_view()),
+
 ]

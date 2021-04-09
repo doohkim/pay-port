@@ -8,43 +8,44 @@ from members.exceptions import PasswordNotMatchingException, TakenEmailException
 from members.models import PayGoUser
 
 
-class SingUpSerializer(serializers.ModelSerializer):
-    password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
-
-    class Meta:
-        model = PayGoUser
-        fields = ['email', 'password', 'password2']
-
-    def validate(self, data):
-        print(data)
-        if PayGoUser.objects.filter(email=data['email']).exists():
-            raise TakenEmailException
-        if data['password'] != data['password2']:
-            raise PasswordNotMatchingException
-        data.pop('password2')
-        return data
-
-    def create(self, validated_data):
-        print(validated_data)
-        return PayGoUser.objects.create_user(**validated_data)
+# class SingUpSerializer(serializers.ModelSerializer):
+#     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
+#
+#     class Meta:
+#         model = PayGoUser
+#         fields = ['email', 'password', 'password2']
+#
+#     def validate(self, data):
+#         print(data)
+#         if PayGoUser.objects.filter(email=data['email']).exists():
+#             raise TakenEmailException
+#         if data['password'] != data['password2']:
+#             raise PasswordNotMatchingException
+#         data.pop('password2')
+#         return data
+#
+#     def create(self, validated_data):
+#         print(validated_data)
+#         return PayGoUser.objects.create_user(**validated_data)
 
 
 class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
-    password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
+
+    # password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
 
     class Meta:
         model = PayGoUser
-        fields = ['email', 'password', 'password2']
+        fields = ['email', 'password', ]  # 'password2']
 
     def validate(self, data):
-        print(data)
+        # print(data)
         if PayGoUser.objects.filter(email=data['email']).exists():
             raise TakenEmailException
-        if data['password'] != data['password2']:
-            raise PasswordNotMatchingException
-        data.pop('password2')
+        # if data['password'] != data['password2']:
+        #     raise PasswordNotMatchingException
+        # data.pop('password2')
         return data
 
     def create(self, validated_data):
