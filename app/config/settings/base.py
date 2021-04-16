@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
+    'rangefilter',
+    'nested_admin',
 ]
 
 # Static paths
@@ -109,7 +111,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',  # <-- And here
 
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
 
     ],
     'DEFAULT_PERMISSION_CLASSES': [
@@ -156,7 +158,9 @@ USE_L10N = True
 USE_TZ = True
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
-#
+
+
+DATE_INPUT_FORMATS = ['%d-%m-%Y %H:%M:%S']
 # CORS_ALLOW_METHODS = (
 #     'DELETE',
 #     'GET',

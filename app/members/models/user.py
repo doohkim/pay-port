@@ -52,9 +52,9 @@ class PayGoUser(AbstractUser):
     main_homepage = models.URLField("메인홈페이지_URL", blank=True, null=True)
     sub_homepage = models.URLField("서브몰심사_URL", blank=True, null=True)
     # 아이디 활성화 여부
-    is_active = models.BooleanField('활성화여부', default=True)
+    is_active = models.BooleanField('아이디 활성화여부', default=True)
     user_type = models.CharField('타입', max_length=1, choices=CHOICES_TYPE, default=TYPE_FRANCHISEE)
-    boss_name = models.CharField('보스이름', max_length=20, blank=True, null=True)
+    boss_name = models.CharField('가맹점주 이름', max_length=20, blank=True, null=True)
     email = models.EmailField('이메일', unique=True, max_length=100)
     phone_number = models.CharField('전화번호', max_length=30, blank=True, null=True)
     fax_number = models.CharField("팩스번호", max_length=30, blank=True, null=True)
@@ -71,7 +71,7 @@ class PayGoUser(AbstractUser):
                                related_name='paygousers', help_text='사업자번호등록')
     # 에이전트
     agencies = models.ForeignKey('self', on_delete=models.PROTECT, related_name='franchisee_to_agency',
-                                 verbose_name='가맹점 소개 시킨 에이전트 목록', blank=True, null=True, help_text='에이전트')
+                                 verbose_name='가맹점 소개한 에이전트 목록', blank=True, null=True, help_text='에이전트')
     # 담당자
     # 그리고 M2M은 related_name 뭐라고 적어야 하지?
     # related_name 과 변수명이 같아야 하는가?
@@ -103,7 +103,9 @@ class PayGoUser(AbstractUser):
         return f'{self.email} | 로그인시 : {self.user_type}'
 
     def merchant_id(self):
-        return 'paygo'+f'{self.phone_number[-8:]}m'
+        if self.phone_number is None:
+            return f'required_phone_number'
+        return f'paygo{self.phone_number[-4:]}m'
 
 
 class ConnectPayGoUserManager(models.Model):

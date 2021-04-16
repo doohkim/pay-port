@@ -153,6 +153,9 @@ class SettlementInformation(models.Model):
                                                               choices=TAX_BILL_CLASSIFICATION, default=MONTH)
     standard_for_issuance_of_tax_invoice = models.CharField('세금계산서발행기준', max_length=20, blank=True, null=True,
                                                             choices=TAX_BILL_STANDARD, default=CALCULATE)
+
+    paygo_fee = models.FloatField('페이고 수수료', default=3.1)
+    agency_fee = models.FloatField('에이전트 수수료', default=0.1)
     created_date = models.DateTimeField('생성날짜', auto_now_add=True)
     updated_date = models.DateTimeField('업데이트된날짜', auto_now=True)
 
@@ -185,4 +188,4 @@ class SettlementAccount(models.Model):
 
     def __str__(self):
         # return f' bank_name: {self.bank} | mid : {self.settlement_account}'
-        return f' bank_name: {self.bank} | mid :'
+        return f' bank_name: {self.bank} |  계좌번호: {self.account_number}'

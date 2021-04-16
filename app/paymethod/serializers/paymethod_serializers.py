@@ -153,15 +153,15 @@ class PaymentMethodUpdateSerializer(ModelSerializer):
         return payment_method_instance
 
 
-
 class PaymentMethodOnlySerializer(ModelSerializer):
-
     class Meta:
         model = PaymentMethod
         fields = '__all__'
 
+
 class PaymentMethodSettlementCycleOnlySerializer(ModelSerializer):
     payment_method = PaymentMethodOnlySerializer()
+
     class Meta:
         model = PaymentMethodSettlementCycle
         fields = '__all__'

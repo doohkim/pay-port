@@ -404,3 +404,9 @@ webencodings==0.5.1; python_version >= "3.6" and python_full_version < "3.0.0" o
 zipp==3.4.0; python_version < "3.8" and python_version >= "3.6" \
     --hash=sha256:102c24ef8f171fd729d46599845e95c7ab894a4cf45f5de11a44cc7444fb1108 \
     --hash=sha256:ed5eee1974372595f9e416cc7bbeeb12335201d8081ca8a0743c954d4446e5cb
+
+Django~=2.2.17
+djangorestframework~=3.12.2
+requests~=2.25.1
+django-nested-admin~=3.3.3
+beautifulsoup4~=4.9.3

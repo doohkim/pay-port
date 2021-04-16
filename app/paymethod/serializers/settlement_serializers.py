@@ -1,6 +1,7 @@
 from django.db import transaction
 from rest_framework.serializers import ModelSerializer
 
+# from members.serializers import UserPaymentInfoDetailSerializer
 from paymethod.exceptions import SettlementAccountBadRequestException, SettlementInformationCreateBadRequestException, \
     SettlementInformationUpdateBadRequestException
 from paymethod.models import SettlementAccount, SettlementInformation
@@ -18,11 +19,18 @@ class SettlementAccountSerializer(ModelSerializer):
 # 유저 정산정보 리스트
 class SettlementInformationSerializer(ModelSerializer):
     settlement_account = SettlementAccountSerializer(many=True, required=False)
-
     class Meta:
         model = SettlementInformation
         fields = '__all__'
+# 유저 정산정보 리스트
 
+
+# class SettlementInformationWithUserSerializer(ModelSerializer):
+#     settlement_account = SettlementAccountSerializer(many=True, required=False)
+#     paygouser = UserPaymentInfoDetailSerializer(read_only=True)
+#     class Meta:
+#         model = SettlementInformation
+#         fields = '__all__'
 
 # 유저 정산 계좌 Create
 class SettlementAccountCreateSerializer(ModelSerializer):

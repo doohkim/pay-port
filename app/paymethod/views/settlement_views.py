@@ -1,11 +1,12 @@
 from rest_framework import generics
-from rest_framework.generics import get_object_or_404
+from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from paymethod.exceptions import SettlementAccountListBadRequestException
 from paymethod.models import SettlementInformation, SettlementAccount
 from paymethod.serializers import SettlementInformationSerializer, SettlementInformationCreateSerializer, \
     SettlementInformationUpdateSerializer, SettlementAccountSerializer, SettlementAccountCreateSerializer
+    # SettlementInformationWithUserSerializer
 
 
 # 정산정보 API
@@ -21,6 +22,12 @@ class SettlementInformationListCreateAPIVew(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(paygouser=self.request.user)
+
+
+# class SettlementInformationListAPIVew(ListAPIView):
+#     permission_classes = [IsAuthenticated, ]
+#     queryset = SettlementInformation.objects.all()
+#     serializer_class = SettlementInformationWithUserSerializer
 
 
 class SettlementInformationUpdateAPIView(generics.UpdateAPIView):

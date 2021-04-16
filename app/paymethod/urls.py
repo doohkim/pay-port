@@ -3,12 +3,14 @@ from django.urls import path
 from paymethod.views import SettlementInformationListCreateAPIVew, PaymentMethodCreateAPIView, PaymentMethodListAPIView, \
     PaymentMethodUpdateAPIView, PaymentMethodRetrieveAPIView, SettlementInformationUpdateAPIView, \
     SettlementInformationRetrieveAPIView, SettlementAccountListAPIView, SettlementAccountCreateAPIView, \
-    PaymentMethodSettlementCycleListAPIView, PaymentMethodSettlementCycleCreateAPIView
+    PaymentMethodSettlementCycleListAPIView, PaymentMethodSettlementCycleCreateAPIView\
+    #, SettlementInformationListAPIVew
 
 urlpatterns = [
     # 정산정보 API
     # list / create 같은 url
-    path('settlement/', SettlementInformationListCreateAPIVew.as_view()),
+    path('settlement/create/', SettlementInformationListCreateAPIVew.as_view()),
+    # path('settlement/', SettlementInformationListAPIVew.as_view()),
     path('settlement/update/', SettlementInformationUpdateAPIView.as_view()),
     path('settlement/retrieve/', SettlementInformationRetrieveAPIView.as_view()),
 

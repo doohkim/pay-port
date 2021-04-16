@@ -1,8 +1,10 @@
 from rest_framework.serializers import ModelSerializer
 
-from members.serializers import UserDetailSerializer, serializers
+from members.models import PayGoUser
+from members.serializers import UserDetailSerializer, serializers, UserPaymentInfoDetailSerializer
 from payments.exceptsions import PaymentOrderNumberNotUniqueRequestException
 from payments.models import Payment
+from paymethod.serializers import PaymentMethodSerializer
 
 
 class PaymentSerializer(ModelSerializer):
@@ -41,6 +43,19 @@ class PaymentCreateSerializer(ModelSerializer):
         obj = Payment.objects.filter(
             order_number=attrs['order_number']
         )
-        if obj is not None:
+        print('obj', len(obj) )
+        print(attrs['order_number'])
+        if len(obj) != 0:
             raise PaymentOrderNumberNotUniqueRequestException
         return attrs
+
+
+class PaymentInfoSerializer(ModelSerializer):
+    paygouser = UserPaymentInfoDetailSerializer(required=False, read_only=True)
+
+
+    class Meta:
+        model = Payment
+        fields = "__all__"
+
+    # def get_pay_method_info(self, obj):

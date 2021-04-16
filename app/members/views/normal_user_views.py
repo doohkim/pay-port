@@ -10,11 +10,10 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from members.models import PayGoUser
 from members.serializers.user_serializers import AuthSerializer, UserLoginSerializer, \
-    UserDetailSerializer, RegisterSerializer
+    UserDetailSerializer, RegisterSerializer, UserPaymentInfoDetailSerializer
 
 
 class RegisterAPIView(generics.CreateAPIView):
@@ -35,7 +34,6 @@ class AuthTokenAPIVIew(generics.GenericAPIView):
         email = request.data['email']
         password = request.data['password']
         user = authenticate(email=email, password=password)
-        # print(user)
         if user:
             token, _ = Token.objects.get_or_create(user=user)
         else:
@@ -124,7 +122,18 @@ class PwdResetEmailAPIView(generics.GenericAPIView):
 
 
 class UserLogoutAPIView(generics.GenericAPIView):
-    pass
+    permission_classes = (AllowAny,)
+    queryset = Token.objects.all()
+
+    def post(self, request):
+        queryset = self.get_queryset()
+        user_token = request.data['userToken']
+        if user_token:
+            token = queryset.get(key=user_token)
+        else:
+            return AuthenticationFailed()
+        token.delete()
+        return Response('logout success', status=status.HTTP_204_NO_CONTENT)
 
 
 class UserDetailAPIView(generics.RetrieveAPIView):
@@ -149,25 +158,11 @@ class HelloView(generics.GenericAPIView):
 class CheckView(generics.RetrieveAPIView):
     permission_classes = (AllowAny,)
     queryset = PayGoUser.objects.all()
-    serializer_class = UserDetailSerializer
+    serializer_class = UserPaymentInfoDetailSerializer
 
     def get_object(self):
         obj = self.queryset.first()
         return obj
-
-
-# class RestTokenCheckView(generics.RetrieveAPIView):
-#     permission_classes = (IsAuthenticated,)
-#     queryset = PayGoUser.objects.all()
-#     serializer_class = UserDetailSerializer
-#
-#     def get_object(self):
-#         user = self.request.user
-#         if user:
-#             token, _ = Token.objects.get_or_create(user=user)
-#         else:
-#             return AuthenticationFailed()
-#         return user
 
 
 class RestTokenCheckView(generics.GenericAPIView):

@@ -32,7 +32,7 @@ class Owner(models.Model):
     business_representative_fax = models.CharField("대표자_FAX", max_length=100, blank=True, null=True)
     business_representative_email = models.EmailField("대표자_EMAIL", max_length=255, blank=True, null=True)
     # 필수 항목
-    joined_date = models.DateField("접수일", auto_now_add=True)
+    joined_date = models.DateField("계약일", auto_now_add=True)
     business_classification = models.CharField("사업체구분", max_length=100)
     business_name = models.CharField("상호명", max_length=100)
     business_main_item = models.CharField('주요판매물품', max_length=100)
@@ -51,7 +51,7 @@ class Owner(models.Model):
     contact_date_year_month = models.DateField("계약일자", default=datetime.date.today)
     # 계약 예정월 (월까지 표시하도록)
     contact_date_month = models.DateField("계약예정월", default=datetime.date.today)
-    contact_receipt = models.BooleanField("계약서_수취", default=False)
+    contact_receipt = models.BooleanField("계약서 수취", default=False)
     contact_current_status = models.CharField("계약현재상태", max_length=15, choices=CONTACT_STATUS,
                                               default=CONTACT_IN_CONSULTATION)
     contact_type = models.CharField("계약서종류", max_length=100, default="일반")
