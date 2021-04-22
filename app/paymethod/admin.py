@@ -5,25 +5,25 @@ from paymethod.models import PaymentMethod, PaymentMethodSettlementCycle, Settle
 import nested_admin
 
 
-class PaymentMethodSettlementCycleInlineAdmin(nested_admin.NestedTabularInline):
+class PaymentMethodSettlementCycleInlineAdmin(nested_admin.NestedStackedInline):
     model = PaymentMethodSettlementCycle
-    extra = 1
+    extra = 0
 
 
-class PaymentMethodInlineAdmin(nested_admin.NestedTabularInline):
+class PaymentMethodInlineAdmin(nested_admin.NestedStackedInline):
     model = PaymentMethod
-    extra = 1
+    extra = 0
     inlines = (PaymentMethodSettlementCycleInlineAdmin,)
 
 
-class SettlementAccountInlineAdmin(nested_admin.NestedTabularInline):
+class SettlementAccountInlineAdmin(nested_admin.NestedStackedInline):
     model = SettlementAccount
-    extra = 1
+    extra = 0
 
 
-class SettlementInformationInlineAdmin(nested_admin.NestedTabularInline):
+class SettlementInformationInlineAdmin(nested_admin.NestedStackedInline):
     model = SettlementInformation
-    extra = 1
+    extra = 0
     inlines = (SettlementAccountInlineAdmin, )
 
 

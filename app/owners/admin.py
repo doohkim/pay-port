@@ -58,6 +58,6 @@ class PayGoComputationalManagerAdmin(admin.ModelAdmin):
     pass
 
 
-class ConnectPayGoUserManagerAdmin(nested_admin.NestedTabularInline):
+class ConnectPayGoUserManagerAdmin(nested_admin.NestedStackedInline):
     model = PayGoUser.franchisee_managers.through
-    extra = 1
+    extra = 0

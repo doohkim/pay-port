@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from members.models import FranchiseeUser, PayGoUser, AgencyUser
+from members.models import PayGoUser, AgencyUser
 from rangefilter.filter import DateRangeFilter
 
 from owners.admin import ConnectPayGoUserManagerAdmin
@@ -8,33 +8,41 @@ from paymethod.admin import PaymentMethodInlineAdmin, SettlementInformationInlin
 import nested_admin
 
 
-class FranchiseeUserAdmin(admin.ModelAdmin):
-    fields = ('email',)
-
-
-class AgencyUserAdmin(admin.ModelAdmin):
-    fields = ('email', ('owners', 'is_active'))
-
-
-class AgencyUserInline(admin.ModelAdmin):
+class AgencyUserInline(nested_admin.NestedStackedInline):
     model = AgencyUser
+    extra = 0
+    fieldsets = (
+        ('기본 정보', {
+            "fields": (('gid', 'mid_name'), 'email',
+                       ('user_type', 'is_active')
+                       )
+        }),
+        ('개인 정보', {
+            "fields": ("boss_name", "phone_number", "fax_number",)
+        }),
+        ("사업자 등록", {
+            "fields": ("owners",)
+        }),
+    )
+
 
 @admin.register(PayGoUser)
 class PayGoUserAdmin(nested_admin.NestedModelAdmin):
     list_filter = ('user_type', ('store_joined_date', DateRangeFilter),)
     list_display = (
-        'get_owner_name',
         'get_owner_number',
+        'get_business_name',
         'email',
         'merchant_id',
-
         'phone_number',
-
         'user_type',
         # 'store_status',
         'store_joined_date',
 
         # 수수료
+        'get_settlement_cycle',
+
+
         # 원가수수료
         # 대리점수수료
         # 총판수수료
@@ -42,6 +50,7 @@ class PayGoUserAdmin(nested_admin.NestedModelAdmin):
         # 영중소 구분(무엇?)
 
     )
+    list_display_links = ('get_settlement_cycle', )
     autocomplete_fields = ('agencies',)
     fieldsets = (
         ('회원정보', {
@@ -54,9 +63,6 @@ class PayGoUserAdmin(nested_admin.NestedModelAdmin):
         }),
         ("사업자 등록", {
             "fields": ("owners",)
-        }),
-        ("에이전트 등록", {
-            "fields": ("agencies",)
         }),
         ('기타 사항', {
             "fields": (
@@ -73,7 +79,7 @@ class PayGoUserAdmin(nested_admin.NestedModelAdmin):
     inlines = (
         ConnectPayGoUserManagerAdmin,
         PaymentMethodInlineAdmin,
-        # AgencyUserInline,
+        AgencyUserInline,
         SettlementInformationInlineAdmin,
     )
 
@@ -82,14 +88,26 @@ class PayGoUserAdmin(nested_admin.NestedModelAdmin):
             return 'not register'
         return obj.owners.business_license_number
 
-    def get_owner_name(self, obj):
+    def get_business_name(self, obj):
         if obj.owners is None:
             return 'not register'
         return obj.owners.business_name
 
-    # agencies.short_description = '에이전시 등록'
+    def get_settlement_cycle(self, obj):
+        pay_methods = obj.payment_methods.all()
+        method_type = pay_methods.get(method_type='신용카드')
+        pay_method_settlement_info = method_type.payment_method_settlement_cycles.all().first()
+        try:
+            cycle = pay_method_settlement_info.cycle
+            return cycle
+        except Exception as e:
+            print(e)
+            cycle = None
+            return cycle
+
+
     get_owner_number.short_description = '사업자번호'
-    get_owner_name.short_description = '상호명'
+    get_business_name.short_description = '상호명'
     ordering = ('-store_joined_date', 'user_type',)
     list_editable = ('user_type',)
     list_per_page = 10
@@ -112,7 +130,3 @@ class PayGoUserAdmin(nested_admin.NestedModelAdmin):
     #     self.message_user(request, '{}건의 포스팅을 Published 상태로 변경'.format(response.json()))
 
     # request_send_message.short_description = '유저 타입 에이전시로 상태로 변경'
-
-
-admin.site.register(AgencyUser, AgencyUserAdmin)
-admin.site.register(FranchiseeUser, FranchiseeUserAdmin)

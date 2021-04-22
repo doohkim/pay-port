@@ -39,12 +39,12 @@ class PaymentMethod(models.Model):
 
 class PaymentMethodSettlementCycle(models.Model):
     NOT_SETTLED, IMMEDIATELY, DAY1, DAY2, DAY3, DAY4, DAY5, DAY6, DAY7, DAY8, DAY9, DAY10, DAY11, DAY12, DAY13, DAY14, \
-        DAY15, MONTH1, MONTH2, MONTH3, MONTH4 = 'not_settled', 'immediately', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', \
+        DAY15, MONTH1, MONTH2, MONTH3, MONTH4 = 'not_settled', 'immediately','D1', 'D2', 'D3', 'D4', 'D5', 'D6', \
                                                 'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'M1', \
                                                 'M2', 'M3', 'M4'
     SETTLEMENT_CYCLE = (
         (NOT_SETTLED, 'not_settled'),
-        (IMMEDIATELY, 'immediately'),
+        (IMMEDIATELY, '즉시입금'),
         (DAY1, 'D1'),
         (DAY2, 'D2'),
         (DAY3, 'D3'),
@@ -68,7 +68,7 @@ class PaymentMethodSettlementCycle(models.Model):
     )
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.PROTECT,
                                        related_name='payment_method_settlement_cycles', help_text="결제수단")
-    cycle = models.CharField('정산주기', choices=SETTLEMENT_CYCLE, max_length=20, default=DAY1)
+    cycle = models.CharField('정산주기', choices=SETTLEMENT_CYCLE, max_length=20, default=NOT_SETTLED)
     applied_date = models.DateField('적용일자', default=date.today)
     settlement_wait_time = models.PositiveIntegerField('정산대기시간', blank=True, null=True, default=0)
     affiliate_withdrawal_use_or_not = models.BooleanField('가맹점출금여부', blank=True, null=True, default=False)
@@ -119,7 +119,6 @@ class SettlementInformation(models.Model):
         (SEMIANNUAL, 'semiannual'),
         (QUARTER, 'quarter'),
         (YEAR, 'year'),
-
     )
     APPROVED, CALCULATE, PURCHASE = 'approved', 'calculate', 'purchase'
     TAX_BILL_STANDARD = (
@@ -129,10 +128,6 @@ class SettlementInformation(models.Model):
     )
     paygouser = models.OneToOneField(PayGoUser, on_delete=models.PROTECT, related_name='settlement_informations',
                                      help_text="유저")
-    # 에이전시, 가맹점주 각각 null=True 상태에서 각각받아주는 방법도 있다.
-    # agency = models.OneToOneField(Agency, on_delete=models.PROTECT,
-    #                                  related_name='agency',
-    #                                  help_text="에이전시")
     settlement_use_or_not = models.BooleanField('정산사용여부', blank=True, null=True, default=True)
     fee_settlement_standard = models.CharField('수수료정산기준', blank=True, null=True, choices=CANCEL_STATUS, max_length=30,
                                                default=PRE_CANCEL)

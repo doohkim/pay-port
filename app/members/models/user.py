@@ -54,7 +54,7 @@ class PayGoUser(AbstractUser):
     # 아이디 활성화 여부
     is_active = models.BooleanField('아이디 활성화여부', default=True)
     user_type = models.CharField('타입', max_length=1, choices=CHOICES_TYPE, default=TYPE_FRANCHISEE)
-    boss_name = models.CharField('가맹점주 이름', max_length=20, blank=True, null=True)
+    boss_name = models.CharField('대표', max_length=20, blank=True, null=True)
     email = models.EmailField('이메일', unique=True, max_length=100)
     phone_number = models.CharField('전화번호', max_length=30, blank=True, null=True)
     fax_number = models.CharField("팩스번호", max_length=30, blank=True, null=True)
@@ -65,8 +65,8 @@ class PayGoUser(AbstractUser):
     pay_link_or_not = models.BooleanField('페이링크여부', default=False)
     pg_info_auto_save_or_not = models.BooleanField('PG_정보자동저장', default=False)
     delivery_pay_or_not = models.BooleanField('딜리버리페이여부', default=False)
+    # 법인 추가! choice 법인 사업, 개인, 비사업자....
 
-    # 사업자 | 나중에 필수값으로 설정 해주자!
     owners = models.ForeignKey('owners.Owner', on_delete=models.PROTECT, null=True, blank=True,
                                related_name='paygousers', help_text='사업자번호등록')
     # 에이전트
