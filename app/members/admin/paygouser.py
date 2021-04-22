@@ -42,7 +42,6 @@ class PayGoUserAdmin(nested_admin.NestedModelAdmin):
         # 수수료
         'get_settlement_cycle',
 
-
         # 원가수수료
         # 대리점수수료
         # 총판수수료
@@ -50,7 +49,7 @@ class PayGoUserAdmin(nested_admin.NestedModelAdmin):
         # 영중소 구분(무엇?)
 
     )
-    list_display_links = ('get_settlement_cycle', )
+    list_display_links = ('get_settlement_cycle',)
     autocomplete_fields = ('agencies',)
     fieldsets = (
         ('회원정보', {
@@ -59,27 +58,32 @@ class PayGoUserAdmin(nested_admin.NestedModelAdmin):
                        )
         }),
         ('가맹점 정보', {
-            "fields": ("boss_name", "phone_number", "fax_number",)
+            "fields": (("boss_name", "phone_number", "fax_number",),)
         }),
         ("사업자 등록", {
             "fields": ("owners",)
         }),
+        ("에이전시 등록", {
+            "fields": ("agencies",)
+        }),
         ('기타 사항', {
             "fields": (
-                (
+                ((
                     "transfer_or_not",
                     "published_or_not",
                     "pay_link_or_not",
                     "pg_info_auto_save_or_not",
                     "delivery_pay_or_not",
-                )
+                ),)
             ),
         })
     )
+
     inlines = (
         ConnectPayGoUserManagerAdmin,
         PaymentMethodInlineAdmin,
-        AgencyUserInline,
+        # 에이전시 등록 기존에 걸로 등록 할수 있는게 좋겠다 싶어 여기는 이렇게 열어놈
+        # AgencyUserInline,
         SettlementInformationInlineAdmin,
     )
 
@@ -102,9 +106,7 @@ class PayGoUserAdmin(nested_admin.NestedModelAdmin):
             return cycle
         except Exception as e:
             print(e)
-            cycle = None
-            return cycle
-
+            return None
 
     get_owner_number.short_description = '사업자번호'
     get_business_name.short_description = '상호명'

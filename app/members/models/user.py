@@ -43,6 +43,12 @@ class PayGoUser(AbstractUser):
         (TYPE_STAFF, '관리자'),
         (TYPE_NORMAL, '일반가입자'),
     )
+    CORPORATE_BUSINESS, SOLE_PROPRIETORSHIP, NON_BUSINESS = 'coprerate', 'sole', 'non'
+    BUSINESS_TYPE = (
+        (CORPORATE_BUSINESS, '법인사업자'),
+        (SOLE_PROPRIETORSHIP, '자영업'),
+        (NON_BUSINESS, '비사업자'),
+    )
     username = None
     # 아이디
     # mid = models.CharField("가맹점아이디_MID", blank=True, unique=True, max_length=10)
@@ -65,7 +71,7 @@ class PayGoUser(AbstractUser):
     pay_link_or_not = models.BooleanField('페이링크여부', default=False)
     pg_info_auto_save_or_not = models.BooleanField('PG_정보자동저장', default=False)
     delivery_pay_or_not = models.BooleanField('딜리버리페이여부', default=False)
-    # 법인 추가! choice 법인 사업, 개인, 비사업자....
+    business_type = models.CharField('사업체구분', max_length=10, choices=BUSINESS_TYPE, default=BUSINESS_TYPE )
 
     owners = models.ForeignKey('owners.Owner', on_delete=models.PROTECT, null=True, blank=True,
                                related_name='paygousers', help_text='사업자번호등록')

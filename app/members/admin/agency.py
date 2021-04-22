@@ -26,7 +26,7 @@ class AgencyUserAdmin(nested_admin.NestedModelAdmin):
     inlines = (
         ConnectPayGoUserManagerAdmin,
         PaymentMethodInlineAdmin,
-        AgencyUserInline,
+        # AgencyUserInline,
         SettlementInformationInlineAdmin,
     )
 
