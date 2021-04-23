@@ -8,8 +8,8 @@ from members.models import PayGoUser
 class PaymentMethod(models.Model):
     AGENCIES, RELAY = 'ag', 're'
     FRANCHISEE_TYPE = (
-        (AGENCIES, 'ag'),
-        (RELAY, 're'),
+        (AGENCIES, '대행'),
+        (RELAY, '중계'),
     )
 
     paygouser = models.ForeignKey(PayGoUser, on_delete=models.PROTECT, related_name='payment_methods', help_text="유저")
@@ -43,7 +43,7 @@ class PaymentMethodSettlementCycle(models.Model):
                                                 'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'M1', \
                                                 'M2', 'M3', 'M4'
     SETTLEMENT_CYCLE = (
-        (NOT_SETTLED, 'not_settled'),
+        (NOT_SETTLED, '선택안함'),
         (IMMEDIATELY, '즉시입금'),
         (DAY1, 'D1'),
         (DAY2, 'D2'),
@@ -93,38 +93,39 @@ class SettlementInformation(models.Model):
     )
     TRIMMING, ROUNDS = 'trim', 'rounds'
     FEE_STANDARD = (
-        (TRIMMING, 'trim'),
-        (ROUNDS, 'rounds'),
+        (TRIMMING, '버림'),
+        (ROUNDS, '반올림'),
     )
     CANCEL_POSSIBLE, ONLY_BEFORE_PURCHASE, IMPOSSIBLE = 'cancel_possible', 'only_before_purchase', 'impossible'
+    # 비지니스 로직 하루 지나면 취소 불가능 뭐 이런식으로 로직 짜기
     CANCEL_FUNCTION = (
-        (CANCEL_POSSIBLE, 'cancel_possible'),
-        (ONLY_BEFORE_PURCHASE, 'only_before_purchase'),
-        (IMPOSSIBLE, 'impossible'),
+        (CANCEL_POSSIBLE, '취소 가능'),
+        (ONLY_BEFORE_PURCHASE, '매입전만 가능(계좌이체 취소)'),
+        (IMPOSSIBLE, '취소 불가능'),
     )
     NEXT_DAY, D_DAY = 'next_day', 'd_day',
     SETTLEMENT_TYPE = (
-        (NEXT_DAY, 'next_day'),
-        (D_DAY, 'd_day'),
+        (NEXT_DAY, '다음날 정산'),
+        (D_DAY, '당일 정산'),
     )
     MID_SETTLEMENT, GID_SETTLEMENT = 'mid_settlement', 'gid_settlement',
     SETTLEMENT_METHOD = (
-        (MID_SETTLEMENT, 'mid_settlement'),
-        (GID_SETTLEMENT, 'gid_settlement'),
+        (MID_SETTLEMENT, 'MID 정산'),
+        (GID_SETTLEMENT, 'GID 정산'),
     )
     MONTH, OCCASIONAL, SEMIANNUAL, QUARTER, YEAR = 'month', 'occasional', 'semiannual', 'quarter', 'year'
     TAX_BILL_CLASSIFICATION = (
-        (MONTH, 'month'),
-        (OCCASIONAL, 'occasional'),
-        (SEMIANNUAL, 'semiannual'),
-        (QUARTER, 'quarter'),
-        (YEAR, 'year'),
+        (MONTH, '월'),
+        (OCCASIONAL, '수시'),
+        (SEMIANNUAL, '반기'),
+        (QUARTER, '분기'),
+        (YEAR, '연'),
     )
     APPROVED, CALCULATE, PURCHASE = 'approved', 'calculate', 'purchase'
     TAX_BILL_STANDARD = (
-        (APPROVED, 'approved'),
-        (CALCULATE, 'calculate'),
-        (PURCHASE, 'purchase'),
+        (APPROVED, '승인'),
+        (CALCULATE, '정산'),
+        (PURCHASE, '매입'),
     )
     paygouser = models.OneToOneField(PayGoUser, on_delete=models.PROTECT, related_name='settlement_informations',
                                      help_text="유저")

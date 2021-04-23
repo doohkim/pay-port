@@ -36,7 +36,7 @@ class PayGoUserAdmin(nested_admin.NestedModelAdmin):
         'merchant_id',
         'phone_number',
         'user_type',
-        # 'store_status',
+        'business_type',
         'store_joined_date',
 
         # 수수료
@@ -53,8 +53,8 @@ class PayGoUserAdmin(nested_admin.NestedModelAdmin):
     autocomplete_fields = ('agencies',)
     fieldsets = (
         ('회원정보', {
-            "fields": (('gid', 'mid_name'), 'email', ('main_homepage', 'sub_homepage'),
-                       ('user_type', 'is_active')
+            "fields": (('gid', 'mid_name'), 'email', 'password', ('main_homepage', 'sub_homepage'), ('business_type',),
+                       ('user_type', 'is_active'),
                        )
         }),
         ('가맹점 정보', {
@@ -69,12 +69,12 @@ class PayGoUserAdmin(nested_admin.NestedModelAdmin):
         ('기타 사항', {
             "fields": (
                 ((
-                    "transfer_or_not",
-                    "published_or_not",
-                    "pay_link_or_not",
-                    "pg_info_auto_save_or_not",
-                    "delivery_pay_or_not",
-                ),)
+                     "transfer_or_not",
+                     "published_or_not",
+                     "pay_link_or_not",
+                     "pg_info_auto_save_or_not",
+                     "delivery_pay_or_not",
+                 ),)
             ),
         })
     )

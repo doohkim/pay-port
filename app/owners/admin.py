@@ -5,9 +5,20 @@ from owners.models import Owner, PayGoComputationalManager
 import nested_admin
 
 
+class ConnectPayGoUserManagerAdmin(nested_admin.NestedStackedInline):
+    model = PayGoUser.franchisee_managers.through
+    extra = 0
+
+
+class ConnectOwnerManagerAdmin(nested_admin.NestedStackedInline):
+    model = Owner.pay_managers.through
+    extra = 0
+
+
 @admin.register(Owner)
-class OwnerAdmin(admin.ModelAdmin):
+class OwnerAdmin(nested_admin.NestedModelAdmin):
     list_per_page = 20
+    list_editable = ('contact_current_status',)
     list_display = (
         'id',
         'business_name',
@@ -30,7 +41,46 @@ class OwnerAdmin(admin.ModelAdmin):
         'contact_type',
     )
     ordering = ('joined_date',)
-    list_editable = ('contact_current_status',)
+    # fieldsets = (
+    #     ('가맹점 정보', {
+    #         "fields": (
+    #             'business_license_number', ('business_classification', 'business_name', ) , 'business_main_item',
+    #             'application_route', 'sales_channel',
+    #             ('business_store_type', 'business_condition'),
+    #             'business_condition', 'business_capital_amount', 'business_url',
+    #             'business_representative_name', 'business_representative_birth', 'corporate_registration_number',
+    #             'business_representative_phone', 'business_representative_fax', 'business_representative_email',
+    #             'transaction_amount', 'past_pg_company', 'business_official_address', 'business_real_address',
+    #
+    #
+    #             ('business_type',),
+    #             ('user_type', 'is_active')
+    #         )
+    #     }),
+    #     ('가맹점 정보', {
+    #         "fields": (("boss_name", "phone_number", "fax_number",),)
+    #     }),
+    #     ("사업자 등록", {
+    #         "fields": ("owners",)
+    #     }),
+    #     ("에이전시 등록", {
+    #         "fields": ("agencies",)
+    #     }),
+    #     ('기타 사항', {
+    #         "fields": (
+    #             ((
+    #                  "transfer_or_not",
+    #                  "published_or_not",
+    #                  "pay_link_or_not",
+    #                  "pg_info_auto_save_or_not",
+    #                  "delivery_pay_or_not",
+    #              ),)
+    #         ),
+    #     })
+    # )
+    inlines = (
+        ConnectOwnerManagerAdmin,
+    )
 
     def get_manager_name(self, obj):
         obj_bool = obj.owner_to_manager.exists()
@@ -56,8 +106,3 @@ class OwnerAdmin(admin.ModelAdmin):
 @admin.register(PayGoComputationalManager)
 class PayGoComputationalManagerAdmin(admin.ModelAdmin):
     pass
-
-
-class ConnectPayGoUserManagerAdmin(nested_admin.NestedStackedInline):
-    model = PayGoUser.franchisee_managers.through
-    extra = 0

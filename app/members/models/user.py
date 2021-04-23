@@ -60,7 +60,8 @@ class PayGoUser(AbstractUser):
     # 아이디 활성화 여부
     is_active = models.BooleanField('아이디 활성화여부', default=True)
     user_type = models.CharField('타입', max_length=1, choices=CHOICES_TYPE, default=TYPE_FRANCHISEE)
-    boss_name = models.CharField('대표', max_length=20, blank=True, null=True)
+    represent_name = models.CharField('유저 이름', max_length=20, blank=True, null=True)
+    boss_name = models.CharField('대표 이름', max_length=20, blank=True, null=True)
     email = models.EmailField('이메일', unique=True, max_length=100)
     phone_number = models.CharField('전화번호', max_length=30, blank=True, null=True)
     fax_number = models.CharField("팩스번호", max_length=30, blank=True, null=True)
@@ -71,7 +72,7 @@ class PayGoUser(AbstractUser):
     pay_link_or_not = models.BooleanField('페이링크여부', default=False)
     pg_info_auto_save_or_not = models.BooleanField('PG_정보자동저장', default=False)
     delivery_pay_or_not = models.BooleanField('딜리버리페이여부', default=False)
-    business_type = models.CharField('사업체구분', max_length=10, choices=BUSINESS_TYPE, default=CORPORATE_BUSINESS)
+    business_type = models.CharField('사업체구분', max_length=10, choices=BUSINESS_TYPE, default=BUSINESS_TYPE[0][0])
 
     owners = models.ForeignKey('owners.Owner', on_delete=models.PROTECT, null=True, blank=True,
                                related_name='paygousers', help_text='사업자번호등록')
@@ -93,7 +94,7 @@ class PayGoUser(AbstractUser):
     objects = PayGoUserManager()
 
     class Meta:
-        ordering = ['-pk']
+        ordering = ['-pk', 'user_type']
         verbose_name = '관리자'
         verbose_name_plural = '%s 목록' % verbose_name
 
