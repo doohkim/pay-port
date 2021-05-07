@@ -22,7 +22,6 @@ class RegisterAPIView(generics.GenericAPIView):
     def post(self, request):
         email = request.data['username']
         password = request.data['password']
-        print(email)
         data = {
             "email": email,
             "password": password
