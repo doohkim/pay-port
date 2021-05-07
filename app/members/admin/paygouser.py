@@ -119,6 +119,9 @@ class PayGoUserAdmin(nested_admin.NestedModelAdmin):
     empty_value_display = 'unknown'
     date_hierarchy = 'store_joined_date'
 
+
+# pay_site = PayGoUserAdmin(name='PaySite')
+
     # actions = ['request_send_message']
 
     # action 통해서 취소 api 날릴수 있는거 같아

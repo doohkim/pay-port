@@ -1,5 +1,3 @@
-from datetime import timedelta, datetime
-
 import requests
 
 from django.contrib.auth import authenticate
@@ -11,33 +9,57 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
+from members.exceptions import LoginFailException
 from members.models import PayGoUser
 from members.serializers.user_serializers import AuthSerializer, UserLoginSerializer, \
-    UserDetailSerializer, RegisterSerializer, UserPaymentInfoDetailSerializer
+    UserDetailSerializer, RegisterSerializer
 
 
-class RegisterAPIView(generics.CreateAPIView):
+class RegisterAPIView(generics.GenericAPIView):
     permission_classes = (AllowAny,)
     queryset = PayGoUser.objects.all()
-    serializer_class = RegisterSerializer
 
-    def perform_create(self, serializer):
-        user = serializer.save()
-        Token.objects.create(user=user)
+    def post(self, request):
+        email = request.data['username']
+        password = request.data['password']
+        print(email)
+        data = {
+            "email": email,
+            "password": password
+        }
+        serializer = RegisterSerializer(data=data)
+
+        if serializer.is_valid():
+            user = serializer.save()
+
+        else:
+            return LoginFailException
+        if user:
+            token, _ = Token.objects.get_or_create(user=user)
+        else:
+            return LoginFailException()
+        data = {
+            'token': token.key,
+            'email': user.email,
+            'username': user.email.split('@')[0]
+        }
+        return Response(data=data, status=status.HTTP_200_OK)
 
 
+# 로그인 정보
 class AuthTokenAPIVIew(generics.GenericAPIView):
     permission_classes = (AllowAny,)
     serializer_class = AuthSerializer
 
     def post(self, request):
-        email = request.data['email']
+        email = request.data['username']
         password = request.data['password']
         user = authenticate(email=email, password=password)
+        print(user)
         if user:
             token, _ = Token.objects.get_or_create(user=user)
         else:
-            return AuthenticationFailed()
+            return LoginFailException()
         data = {
             'token': token.key,
             'email': user.email,
@@ -53,43 +75,22 @@ class AuthUserLoginView(generics.GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            status_code = status.HTTP_200_OK
-            url = 'http://13.125.1.183/api/token/refresh/'
-            data = {
-                "refresh": serializer.data['refresh']
-            }
-            res = requests.post(url, data=data)
-            refresh_access_token = res.json()
+            # url = 'http://13.125.1.183/api/token/refresh/'
+            # data = {
+            #     "refresh": serializer.data['refresh']
+            # }
+            # res = requests.post(url, data=data)
+            # refresh_access_token = res.json()
             response = {
                 'success': True,
-                'statusCode': status_code,
                 'message': 'User logged in successfully',
                 'access': serializer.data['access'],
                 'refresh': serializer.data['refresh'],
                 'email': serializer.data['email'],
-                'authenticatedUser': {
-                    'email': serializer.data['email'],
-                    'refresh_access_token': refresh_access_token,
-                }
             }
-            return Response(response, status=status_code)
+            return Response(response, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
-
-
-class UserTokenTestAPIView(generics.GenericAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = PayGoUser.objects.all()
-    serializer_class = UserDetailSerializer
-
-    def get_object(self):
-        queryset = self.get_queryset()
-        obj = get_object_or_404(queryset, email=self.request.data['email'])
-        return obj
-
-    def post(self, request):
-        serializer = self.serializer_class(self.get_object())
-        return Response(serializer.data)
 
 
 class TokenSendEmailAPIView(generics.GenericAPIView):
@@ -146,40 +147,17 @@ class UserDetailAPIView(generics.RetrieveAPIView):
         obj = get_object_or_404(queryset, email=self.request.user.email)
         return obj
 
-
-class HelloView(generics.GenericAPIView):
-    permission_classes = (IsAuthenticated,)
-
-    def get(self, request):
-        content = {'message': 'Hello, World!'}
-        return Response(content)
-
-
-class CheckView(generics.RetrieveAPIView):
-    permission_classes = (AllowAny,)
-    queryset = PayGoUser.objects.all()
-    serializer_class = UserPaymentInfoDetailSerializer
-
-    def get_object(self):
-        obj = self.queryset.first()
-        return obj
-
-
-class RestTokenCheckView(generics.GenericAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = PayGoUser.objects.all()
-    serializer_class = UserDetailSerializer
-
-    def get(self, request):
-        user = self.request.user
-        if user:
-            token, _ = Token.objects.get_or_create(user=user)
-        else:
-            return AuthenticationFailed()
-
-        data = {
-            'token': token.key,
-            'email': user.email,
-            'username': user.email.split('@')[0]
-        }
-        return Response(data=data, status=status.HTTP_200_OK)
+#
+# class UserTokenTestAPIView(generics.GenericAPIView):
+#     permission_classes = (IsAuthenticated,)
+#     queryset = PayGoUser.objects.all()
+#     serializer_class = UserDetailSerializer
+#
+#     def get_object(self):
+#         queryset = self.get_queryset()
+#         obj = get_object_or_404(queryset, email=self.request.data['email'])
+#         return obj
+#
+#     def post(self, request):
+#         serializer = self.serializer_class(self.get_object())
+#         return Response(serializer.data)

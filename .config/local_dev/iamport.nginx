@@ -1,3 +1,12 @@
+upstream admin_site {
+    server 127.0.0.1:8000 fail_timeout=0;
+}
+
+upstream main_site {
+    server 127.0.0.1:80` fail_timeout=0;
+}
+
+
 server {
     listen 80;
     charset utf-8;

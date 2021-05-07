@@ -24,7 +24,6 @@ class RegisterSerializer(serializers.Serializer):
         return data
 
     def create(self, validated_data):
-        # print(validated_data)
         return PayGoUser.objects.create_user(**validated_data)
 
 
@@ -77,6 +76,7 @@ class UserPaymentInfoDetailSerializer(serializers.ModelSerializer):
     settlement_informations = SettlementInformationSerializer()
     payment_methods = PaymentMethodSerializer(many=True)
     owners = OwnerSerializer()
+
     class Meta:
         model = PayGoUser
         exclude = [
